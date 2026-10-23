@@ -1,0 +1,1 @@
+Permettre aux pharmaciens de se connecter à la plateforme PharmaFind,  de mettre à jour  les informations de leur pharmacie  et la disponibilité des médicaments afin de fournir aux utilisateurs des informations actualisées.
