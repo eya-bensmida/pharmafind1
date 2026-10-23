@@ -1,0 +1,1 @@
+Permettre aux utilisateurs de rechercher des médicaments, de consulter leur statut,  d'obtenir de l'aide grâce au chatbot afin de faciliter l'accès aux informations sur les médicaments et les pharmacies.
