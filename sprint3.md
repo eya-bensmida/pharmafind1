@@ -1,1 +1,1 @@
-Permettre aux utilisateurs de rechercher des médicaments, de consulter leur statut,  d'obtenir de l'aide grâce au chatbot afin de faciliter l'accès aux informations sur les médicaments et les pharmacies.
+Ce sprint a pour objectif de développer les fonctionnalités d'ajout et de modification de la disponibilité des médicaments, ainsi que la recherche de médicaments. Il permet de finaliser les principales fonctionnalités de l'application et de faciliter la recherche des médicaments disponibles dans les pharmacies.
