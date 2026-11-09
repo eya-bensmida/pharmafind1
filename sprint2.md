@@ -1,1 +1,1 @@
-Permettre aux pharmaciens de se connecter à la plateforme PharmaFind,  de mettre à jour  les informations de leur pharmacie  et la disponibilité des médicaments afin de fournir aux utilisateurs des informations actualisées.
+Ce sprint consiste à développer les fonctionnalités permettant de consulter le statut d'un médicament, d'afficher les informations d'une pharmacie et d'obtenir de l'aide grâce à un chatbot.
