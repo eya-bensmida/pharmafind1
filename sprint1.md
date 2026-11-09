@@ -1,1 +1,1 @@
-Permettre à l'administrateur de se connecter à la plateforme PharmaFind et de gérer les pharmacies (ajout et suppression des pharmacies)et la consultation des recherches des médicaments hors stock 
+Ce sprint a pour objectif de mettre en place le système de connexion des utilisateurs, la gestion des pharmacies ainsi que la consultation des recherches infructueuses
