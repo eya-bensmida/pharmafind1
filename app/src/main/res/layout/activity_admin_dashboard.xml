@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F8F6">
+
+    <!-- TOP BAR -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="18dp"
+        android:background="#FFFFFF"
+        android:elevation="4dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="PharmaFind"
+            android:textSize="23sp"
+            android:textStyle="bold"
+            android:textColor="#287B5B"/>
+
+        <TextView
+            android:id="@+id/txtAdmin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Admin"
+            android:textStyle="bold"
+            android:textColor="#173F35"
+            android:layout_marginEnd="10dp"/>
+
+        <ImageView
+            android:id="@+id/imgAdmin"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@android:drawable/ic_menu_myplaces"
+            android:background="#E7F3EC"
+            android:padding="5dp"/>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <!-- TITLE -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dashboard"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:textColor="#173F35"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gérez les pharmacies et leurs propriétaires"
+                android:textColor="#888888"
+                android:textSize="14sp"
+                android:layout_marginTop="5dp"/>
+
+            <!-- ADD PHARMACY BUTTON -->
+            <Button
+                android:id="@+id/btnAddPharmacy"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="+ Ajouter une pharmacie"
+                android:textAllCaps="false"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#287B5B"
+                android:layout_marginTop="22dp"/>
+
+            <!-- SEARCH -->
+            <EditText
+                android:id="@+id/edtSearch"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:hint="Rechercher une pharmacie..."
+                android:drawableStart="@android:drawable/ic_menu_search"
+                android:drawablePadding="10dp"
+                android:padding="12dp"
+                android:singleLine="true"
+                android:background="@android:drawable/edit_text"
+                android:layout_marginTop="16dp"/>
+
+            <!-- LIST TITLE -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Liste des pharmacies"
+                android:textSize="19sp"
+                android:textStyle="bold"
+                android:textColor="#173F35"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- PHARMACY LIST -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerPharmacies"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

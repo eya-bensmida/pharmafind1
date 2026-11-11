@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F8F6">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Profil du propriétaire"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:textColor="#173F35"
+            android:layout_marginBottom="30dp"/>
+
+        <ImageView
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:src="@android:drawable/ic_menu_myplaces"
+            android:background="#DCEFE5"
+            android:padding="20dp"/>
+
+        <TextView
+            android:id="@+id/txtOwnerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nom du propriétaire"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#173F35"
+            android:layout_marginTop="15dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pharmacien propriétaire"
+            android:textColor="#39866A"
+            android:textSize="14sp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:layout_marginTop="30dp"
+            android:background="#FFFFFF">
+
+            <TextView
+                android:text="Informations du compte"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="#173F35"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="Adresse Email"
+                android:textColor="#888888"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"/>
+
+            <TextView
+                android:id="@+id/txtOwnerEmail"
+                android:text="owner@gmail.com"
+                android:textColor="#173F35"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="Téléphone"
+                android:textColor="#888888"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"/>
+
+            <TextView
+                android:id="@+id/txtOwnerPhone"
+                android:text="22123456"
+                android:textColor="#173F35"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="Pharmacie associée"
+                android:textColor="#888888"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"/>
+
+            <TextView
+                android:id="@+id/txtOwnerPharmacy"
+                android:text="Pharmacie Centrale"
+                android:textColor="#173F35"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnManageOwner"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="Gérer le compte"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#287B5B"
+            android:layout_marginTop="25dp"/>
+
+    </LinearLayout>
+</ScrollView>
