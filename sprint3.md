@@ -1,1 +1,5 @@
-Ce sprint a pour objectif de développer les fonctionnalités d'ajout et de modification de la disponibilité des médicaments, ainsi que la recherche de médicaments. Il permet de finaliser les principales fonctionnalités de l'application et de faciliter la recherche des médicaments disponibles dans les pharmacies.
+le développement des fonctionnalités destinées aux utilisateurs afin de faciliter la recherche de pharmacies, la consultation du statut des médicaments et l'accès à une assistance via un chatbot. 
+-Consultation des pharmacies — a faire 
+-Recherche d'une pharmacie — a faire 
+-Consultation du statut d'un médicament — a faire 
+-Assistance par chatbot — a faire 
