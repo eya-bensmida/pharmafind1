@@ -10,13 +10,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class AddPharmacyActivity extends AppCompatActivity {
 
-    private EditText edtNewName;
-    private EditText edtNewAddress;
-    private EditText edtNewOwner;
-    private EditText edtNewEmail;
-    private EditText edtNewPhone;
+    EditText edtNewName, edtNewAddress;
+    EditText edtNewOwner, edtNewEmail, edtNewPhone;
 
-    private DatabaseHelper dbHelper;
+    Button btnCreatePharmacy;
+
+    DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +30,12 @@ public class AddPharmacyActivity extends AppCompatActivity {
         edtNewEmail = findViewById(R.id.edtNewEmail);
         edtNewPhone = findViewById(R.id.edtNewPhone);
 
-        Button btnCreatePharmacy = findViewById(R.id.btnCreatePharmacy);
+        btnCreatePharmacy = findViewById(R.id.btnCreatePharmacy);
 
-        btnCreatePharmacy.setOnClickListener(v -> addPharmacy());
+        btnCreatePharmacy.setOnClickListener(v -> createPharmacy());
     }
 
-    private void addPharmacy() {
+    private void createPharmacy() {
 
         String name = edtNewName.getText().toString().trim();
         String address = edtNewAddress.getText().toString().trim();
@@ -44,47 +43,30 @@ public class AddPharmacyActivity extends AppCompatActivity {
         String email = edtNewEmail.getText().toString().trim();
         String phone = edtNewPhone.getText().toString().trim();
 
-        if (name.isEmpty() || address.isEmpty()
-                || owner.isEmpty() || email.isEmpty() || phone.isEmpty()) {
+        if (name.isEmpty() || address.isEmpty() ||
+                owner.isEmpty() || email.isEmpty() || phone.isEmpty()) {
 
-            Toast.makeText(
-                    this,
+            Toast.makeText(this,
                     "Veuillez remplir tous les champs",
-                    Toast.LENGTH_SHORT
-            ).show();
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            edtNewEmail.setError("Adresse email invalide");
+            edtNewEmail.setError("Email invalide");
             return;
         }
 
-        long result = dbHelper.addPharmacy(
-                name,
-                address,
-                owner,
-                email,
-                phone
+        long pharmacyId = dbHelper.addPharmacy(
+                name, address, owner, email, phone
         );
-
-        if (result != -1) {
-
-            Toast.makeText(
-                    this,
-                    "Pharmacie ajoutée avec succès",
-                    Toast.LENGTH_SHORT
-            ).show();
-
-            setResult(RESULT_OK);
+        if (pharmacyId != -1) {
+            Toast.makeText(this, "Pharmacie ajoutée avec succès !", Toast.LENGTH_SHORT).show();
             finish();
-
         } else {
-            Toast.makeText(
-                    this,
-                    "Impossible d'ajouter la pharmacie. Vérifiez l'email du propriétaire.",
-                    Toast.LENGTH_LONG
-            ).show();
+            Toast.makeText(this,
+                    "Erreur : vérifie le nom de la pharmacie et l'email du pharmacien.",
+                    Toast.LENGTH_LONG).show();
         }
     }
 }

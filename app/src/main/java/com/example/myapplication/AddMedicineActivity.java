@@ -1,7 +1,6 @@
+
 package com.example.myapplication;
 
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,6 +27,7 @@ public class AddMedicineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_medicine);
 
+        // Initialisation des champs
         edtName = findViewById(R.id.edtMedicineName);
         edtDosage = findViewById(R.id.edtMedicineDosage);
         edtCategory = findViewById(R.id.edtMedicineCategory);
@@ -38,19 +38,32 @@ public class AddMedicineActivity extends AppCompatActivity {
 
         databaseHelper = new DatabaseHelper(this);
 
+        // Récupération de l'identifiant de la pharmacie
         pharmacyId = getIntent().getLongExtra("pharmacy_id", -1);
 
+        if (pharmacyId <= 0) {
+            Toast.makeText(this,
+                    "Identifiant de pharmacie introuvable",
+                    Toast.LENGTH_LONG).show();
+
+            finish();
+            return;
+        }
+
+        // Bouton Enregistrer
         btnSave.setOnClickListener(v -> saveMedicine());
     }
 
     private void saveMedicine() {
 
+        // Récupération des valeurs
         String name = edtName.getText().toString().trim();
         String dosage = edtDosage.getText().toString().trim();
         String category = edtCategory.getText().toString().trim();
         String quantityText = edtQuantity.getText().toString().trim();
         String description = edtDescription.getText().toString().trim();
 
+        // Vérification des champs obligatoires
         if (name.isEmpty() || dosage.isEmpty()
                 || category.isEmpty() || quantityText.isEmpty()) {
 
@@ -60,6 +73,7 @@ public class AddMedicineActivity extends AppCompatActivity {
             return;
         }
 
+        // Vérification de la quantité
         int quantity;
 
         try {
@@ -73,57 +87,36 @@ public class AddMedicineActivity extends AppCompatActivity {
             }
 
         } catch (NumberFormatException e) {
+
             Toast.makeText(this,
                     "Veuillez saisir une quantité valide",
                     Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // Vérification de l'identifiant
         if (pharmacyId <= 0) {
             Toast.makeText(this,
-                    "Identifiant de pharmacie introuvable",
+                    "Identifiant de pharmacie invalide",
                     Toast.LENGTH_LONG).show();
             return;
         }
 
-        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        // Désactiver le bouton pendant l'enregistrement
+        btnSave.setEnabled(false);
 
-        db.beginTransaction();
+        // Ajouter le médicament et son stock
+        String result = databaseHelper.addMedicine(
+                pharmacyId,
+                name,
+                dosage,
+                category,
+                description,
+                quantity
+        );
 
-        try {
-
-            ContentValues medicineValues = new ContentValues();
-            medicineValues.put("name", name);
-            medicineValues.put("dosage", dosage);
-            medicineValues.put("category", category);
-            medicineValues.put("description", description);
-
-            long medicamentId = db.insert(
-                    "medicaments",
-                    null,
-                    medicineValues
-            );
-
-            if (medicamentId == -1) {
-                throw new Exception("Erreur lors de l'ajout du médicament");
-            }
-
-            ContentValues stockValues = new ContentValues();
-            stockValues.put("pharmacy_id", pharmacyId);
-            stockValues.put("medicament_id", medicamentId);
-            stockValues.put("quantity", quantity);
-
-            long stockId = db.insert(
-                    "pharmacy_medicaments",
-                    null,
-                    stockValues
-            );
-
-            if (stockId == -1) {
-                throw new Exception("Erreur lors de l'enregistrement du stock");
-            }
-
-            db.setTransactionSuccessful();
+        // Résultat de l'opération
+        if ("SUCCESS".equals(result)) {
 
             Toast.makeText(this,
                     "Médicament ajouté avec succès !",
@@ -131,14 +124,13 @@ public class AddMedicineActivity extends AppCompatActivity {
 
             finish();
 
-        } catch (Exception e) {
+        } else {
 
             Toast.makeText(this,
-                    "Erreur : " + e.getMessage(),
+                    result,
                     Toast.LENGTH_LONG).show();
 
-        } finally {
-            db.endTransaction();
+            btnSave.setEnabled(true);
         }
     }
 }

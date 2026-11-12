@@ -12,11 +12,15 @@ import java.util.ArrayList;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "pharmafind.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
+
+    // =====================================================
+    // CONFIGURATION
+    // =====================================================
 
     @Override
     public void onConfigure(SQLiteDatabase db) {
@@ -24,10 +28,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.setForeignKeyConstraintsEnabled(true);
     }
 
+    // =====================================================
+    // CRÉATION DES TABLES
+    // =====================================================
+
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        // Création de la table des utilisateurs
         db.execSQL(
                 "CREATE TABLE users (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -36,10 +43,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "password TEXT NOT NULL, " +
                         "phone TEXT, " +
                         "role TEXT NOT NULL, " +
-                        "status TEXT DEFAULT 'active')"
+                        "status TEXT DEFAULT 'active', " +
+                        "requested_pharmacy_name TEXT)"
         );
 
-        // Création de la table des pharmacies
         db.execSQL(
                 "CREATE TABLE pharmacies (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -49,7 +56,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "FOREIGN KEY(owner_id) REFERENCES users(id))"
         );
 
-        // Création de la table des médicaments
         db.execSQL(
                 "CREATE TABLE medicaments (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -59,7 +65,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "description TEXT)"
         );
 
-        // Création de la table d'association pharmacie-médicaments
         db.execSQL(
                 "CREATE TABLE pharmacy_medicaments (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -70,7 +75,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "FOREIGN KEY(medicament_id) REFERENCES medicaments(id))"
         );
 
-        // Création de la table des recherches infructueuses
         db.execSQL(
                 "CREATE TABLE failed_searches (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -78,7 +82,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "created_at TEXT DEFAULT CURRENT_TIMESTAMP)"
         );
 
-        // Compte administrateur de démonstration
+        // Administrateur de démonstration
         ContentValues admin = new ContentValues();
         admin.put("full_name", "Administrateur");
         admin.put("email", "admin@pharmafind.com");
@@ -89,7 +93,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.insert("users", null, admin);
 
-        // AJOUT 1 : Créer le compte pharmacien de démonstration
+        // Pharmacien de démonstration
         ContentValues pharmacist = new ContentValues();
         pharmacist.put("full_name", "Pharmacien Test");
         pharmacist.put("email", "pharmacien@pharmafind.com");
@@ -100,7 +104,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long pharmacistId = db.insert("users", null, pharmacist);
 
-        // AJOUT 2 : Créer une pharmacie associée au compte pharmacien
+        // Pharmacie de démonstration
+        long pharmacyId = -1;
+
         if (pharmacistId != -1) {
 
             ContentValues pharmacy = new ContentValues();
@@ -108,10 +114,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             pharmacy.put("name", "Pharmacie Test");
             pharmacy.put("address", "Centre-ville");
 
-            db.insert("pharmacies", null, pharmacy);
+            pharmacyId = db.insert("pharmacies", null, pharmacy);
         }
 
-        // Médicament de démonstration : Doliprane
+        // Médicament Doliprane
         ContentValues med1 = new ContentValues();
         med1.put("name", "Doliprane");
         med1.put("dosage", "1000 mg");
@@ -120,7 +126,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long med1Id = db.insert("medicaments", null, med1);
 
-        // Médicament de démonstration : Augmentin
+        // Médicament Augmentin
         ContentValues med2 = new ContentValues();
         med2.put("name", "Augmentin");
         med2.put("dosage", "1 g");
@@ -129,49 +135,139 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long med2Id = db.insert("medicaments", null, med2);
 
-        // AJOUT 3 : Associer les médicaments de démonstration à la pharmacie
-        if (pharmacistId != -1) {
+        // Associer les médicaments à la pharmacie de test
+        if (pharmacyId != -1) {
 
-            Cursor pharmacyCursor = db.rawQuery(
-                    "SELECT id FROM pharmacies WHERE owner_id = ?",
-                    new String[]{String.valueOf(pharmacistId)}
-            );
+            if (med1Id != -1) {
+                ContentValues association1 = new ContentValues();
+                association1.put("pharmacy_id", pharmacyId);
+                association1.put("medicament_id", med1Id);
+                association1.put("quantity", 10);
 
-            if (pharmacyCursor.moveToFirst()) {
-
-                long pharmacyId = pharmacyCursor.getLong(0);
-
-                // Associer Doliprane à la pharmacie
-                if (med1Id != -1) {
-                    ContentValues association1 = new ContentValues();
-                    association1.put("pharmacy_id", pharmacyId);
-                    association1.put("medicament_id", med1Id);
-                    association1.put("quantity", 10);
-
-                    db.insert("pharmacy_medicaments", null, association1);
-                }
-
-                // Associer Augmentin à la pharmacie
-                if (med2Id != -1) {
-                    ContentValues association2 = new ContentValues();
-                    association2.put("pharmacy_id", pharmacyId);
-                    association2.put("medicament_id", med2Id);
-                    association2.put("quantity", 5);
-
-                    db.insert("pharmacy_medicaments", null, association2);
-                }
+                db.insert("pharmacy_medicaments", null, association1);
             }
 
-            pharmacyCursor.close();
+            if (med2Id != -1) {
+                ContentValues association2 = new ContentValues();
+                association2.put("pharmacy_id", pharmacyId);
+                association2.put("medicament_id", med2Id);
+                association2.put("quantity", 5);
+
+                db.insert("pharmacy_medicaments", null, association2);
+            }
         }
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Aucune migration nécessaire pour la version actuelle.
+    // =====================================================
+    // VÉRIFIER SI UNE COLONNE EXISTE
+    // =====================================================
+
+    private boolean columnExists(
+            SQLiteDatabase db,
+            String tableName,
+            String columnName) {
+
+        Cursor cursor = db.rawQuery(
+                "PRAGMA table_info(" + tableName + ")",
+                null
+        );
+
+        boolean exists = false;
+
+        try {
+            while (cursor.moveToNext()) {
+
+                String column = cursor.getString(
+                        cursor.getColumnIndexOrThrow("name")
+                );
+
+                if (column.equals(columnName)) {
+                    exists = true;
+                    break;
+                }
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return exists;
     }
 
-    // Vérifier la connexion de l'administrateur
+    // =====================================================
+    // MISE À JOUR DE LA BASE DE DONNÉES
+    // =====================================================
+
+    @Override
+    public void onUpgrade(
+            SQLiteDatabase db,
+            int oldVersion,
+            int newVersion) {
+
+        // Version 1 vers version 2
+        if (oldVersion < 2) {
+
+            if (!columnExists(
+                    db,
+                    "users",
+                    "requested_pharmacy_name")) {
+
+                db.execSQL(
+                        "ALTER TABLE users " +
+                                "ADD COLUMN requested_pharmacy_name TEXT"
+                );
+            }
+        }
+
+        // Version 2 vers version 3
+        if (oldVersion < 3) {
+
+            if (!columnExists(db, "medicaments", "category")) {
+
+                db.execSQL(
+                        "ALTER TABLE medicaments " +
+                                "ADD COLUMN category TEXT"
+                );
+            }
+        }
+    }
+
+    // =====================================================
+    // INSCRIPTION DU PHARMACIEN
+    // =====================================================
+
+    public boolean registerPharmacist(
+            String firstName,
+            String lastName,
+            String email,
+            String phone,
+            String password,
+            String pharmacyName) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(
+                "full_name",
+                firstName.trim() + " " + lastName.trim()
+        );
+
+        values.put("email", email.trim().toLowerCase());
+        values.put("password", password);
+        values.put("phone", phone.trim());
+        values.put("role", "owner");
+        values.put("status", "pending");
+        values.put("requested_pharmacy_name", pharmacyName.trim());
+
+        long result = db.insert("users", null, values);
+
+        return result != -1;
+    }
+
+    // =====================================================
+    // CONNEXION ADMINISTRATEUR
+    // =====================================================
+
     public boolean checkAdmin(String email, String password) {
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -180,7 +276,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "SELECT id FROM users " +
                         "WHERE email = ? AND password = ? " +
                         "AND role = 'admin' AND status = 'active'",
-                new String[]{email, password}
+                new String[]{
+                        email.trim().toLowerCase(),
+                        password
+                }
         );
 
         boolean result = cursor.moveToFirst();
@@ -189,7 +288,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    // AJOUT 4 : Vérifier la connexion du pharmacien
+    // =====================================================
+    // CONNEXION PHARMACIEN
+    // =====================================================
+
     public boolean checkPharmacist(String email, String password) {
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -198,7 +300,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "SELECT id FROM users " +
                         "WHERE email = ? AND password = ? " +
                         "AND role = 'owner' AND status = 'active'",
-                new String[]{email, password}
+                new String[]{
+                        email.trim().toLowerCase(),
+                        password
+                }
         );
 
         boolean result = cursor.moveToFirst();
@@ -207,7 +312,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    // AJOUT 5 : Récupérer l'identifiant de la pharmacie par email du propriétaire
+    // =====================================================
+    // RÉCUPÉRER L'ID DE LA PHARMACIE DU PHARMACIEN
+    // =====================================================
+
     public long getPharmacyIdByOwnerEmail(String email) {
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -216,7 +324,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "SELECT p.id FROM pharmacies p " +
                         "INNER JOIN users u ON p.owner_id = u.id " +
                         "WHERE u.email = ? AND u.role = 'owner'",
-                new String[]{email}
+                new String[]{email.trim().toLowerCase()}
         );
 
         long pharmacyId = -1;
@@ -230,94 +338,125 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return pharmacyId;
     }
 
-    // Ajouter une pharmacie et son propriétaire
-    public long addPharmacy(String name, String address,
-                            String ownerName, String email, String phone) {
+    // =====================================================
+    // AJOUTER UNE PHARMACIE
+    // =====================================================
+
+    public long addPharmacy(
+            String name,
+            String address,
+            String ownerName,
+            String email,
+            String phone) {
 
         SQLiteDatabase db = this.getWritableDatabase();
+
         long pharmacyId = -1;
 
         db.beginTransaction();
 
-        try {
-            long ownerId;
+        Cursor cursor = null;
+        Cursor existing = null;
 
-            Cursor cursor = db.rawQuery(
-                    "SELECT id, role FROM users WHERE email = ?",
-                    new String[]{email}
+        try {
+
+            cursor = db.rawQuery(
+                    "SELECT id, requested_pharmacy_name, status " +
+                            "FROM users WHERE email = ? AND role = 'owner'",
+                    new String[]{email.trim().toLowerCase()}
             );
 
-            if (cursor.moveToFirst()) {
+            if (!cursor.moveToFirst()) {
+                return -1;
+            }
 
-                ownerId = cursor.getLong(0);
-                String role = cursor.getString(1);
+            long ownerId = cursor.getLong(0);
+            String requestedName = cursor.getString(1);
+            String status = cursor.getString(2);
 
-                cursor.close();
+            cursor.close();
+            cursor = null;
 
-                if (!"owner".equalsIgnoreCase(role)) {
-                    throw new Exception(
-                            "Cet email est déjà utilisé par un autre type de compte."
-                    );
-                }
+            if (requestedName == null ||
+                    !requestedName.trim().equalsIgnoreCase(name.trim())) {
+                return -1;
+            }
 
-                ContentValues ownerValues = new ContentValues();
-                ownerValues.put("full_name", ownerName);
-                ownerValues.put("phone", phone);
+            if (!"pending".equalsIgnoreCase(status)) {
+                return -1;
+            }
 
-                db.update(
-                        "users",
-                        ownerValues,
-                        "id = ?",
-                        new String[]{String.valueOf(ownerId)}
-                );
+            existing = db.rawQuery(
+                    "SELECT id FROM pharmacies WHERE owner_id = ?",
+                    new String[]{String.valueOf(ownerId)}
+            );
 
-            } else {
+            boolean alreadyHasPharmacy = existing.moveToFirst();
 
-                cursor.close();
+            existing.close();
+            existing = null;
 
-                ContentValues owner = new ContentValues();
-                owner.put("full_name", ownerName);
-                owner.put("email", email);
-                owner.put("password", "NON_DEFINI");
-                owner.put("phone", phone);
-                owner.put("role", "owner");
-                owner.put("status", "active");
-
-                ownerId = db.insert("users", null, owner);
-
-                if (ownerId == -1) {
-                    throw new Exception("Impossible de créer le propriétaire.");
-                }
+            if (alreadyHasPharmacy) {
+                return -1;
             }
 
             ContentValues pharmacy = new ContentValues();
             pharmacy.put("owner_id", ownerId);
-            pharmacy.put("name", name);
-            pharmacy.put("address", address);
+            pharmacy.put("name", name.trim());
+            pharmacy.put("address", address.trim());
 
             pharmacyId = db.insert("pharmacies", null, pharmacy);
 
             if (pharmacyId == -1) {
-                throw new Exception("Impossible d'ajouter la pharmacie.");
+                return -1;
+            }
+
+            ContentValues ownerValues = new ContentValues();
+            ownerValues.put("full_name", ownerName.trim());
+            ownerValues.put("phone", phone.trim());
+            ownerValues.put("status", "active");
+
+            int updated = db.update(
+                    "users",
+                    ownerValues,
+                    "id = ?",
+                    new String[]{String.valueOf(ownerId)}
+            );
+
+            if (updated <= 0) {
+                return -1;
             }
 
             db.setTransactionSuccessful();
 
+            return pharmacyId;
+
         } catch (Exception e) {
-            e.printStackTrace();
-            pharmacyId = -1;
+
+            return -1;
 
         } finally {
+
+            if (cursor != null) {
+                cursor.close();
+            }
+
+            if (existing != null) {
+                existing.close();
+            }
+
             db.endTransaction();
         }
-
-        return pharmacyId;
     }
 
-    // Récupérer toutes les pharmacies avec les informations du propriétaire
+    // =====================================================
+    // RÉCUPÉRER TOUTES LES PHARMACIES
+    // =====================================================
+
     public ArrayList<Pharmacy> getAllPharmacies() {
 
         ArrayList<Pharmacy> list = new ArrayList<>();
+
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(
@@ -330,7 +469,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         );
 
         if (cursor.moveToFirst()) {
+
             do {
+
                 long id = cursor.getLong(0);
                 String name = cursor.getString(1);
                 String address = cursor.getString(2);
@@ -352,11 +493,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         cursor.close();
+
         return list;
     }
 
-    // Modifier une pharmacie
-    public boolean updatePharmacy(long id, String name, String address) {
+    // =====================================================
+    // MODIFIER UNE PHARMACIE
+    // =====================================================
+
+    public boolean updatePharmacy(
+            long id,
+            String name,
+            String address) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -374,14 +522,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rows > 0;
     }
 
-    // Supprimer une pharmacie
+    // =====================================================
+    // SUPPRIMER UNE PHARMACIE
+    // =====================================================
+
     public boolean deletePharmacy(long id) {
 
         SQLiteDatabase db = this.getWritableDatabase();
+
         db.beginTransaction();
 
         try {
-            // Supprimer d'abord les associations avec les médicaments
+
             db.delete(
                     "pharmacy_medicaments",
                     "pharmacy_id = ?",
@@ -395,6 +547,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             );
 
             if (rows > 0) {
+
                 db.setTransactionSuccessful();
                 return true;
             }
@@ -406,7 +559,94 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // Enregistrer une recherche infructueuse
+    // =====================================================
+    // AJOUTER UN MÉDICAMENT ET SON STOCK
+    // =====================================================
+
+    public String addMedicine(
+            long pharmacyId,
+            String name,
+            String dosage,
+            String category,
+            String description,
+            int quantity) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.beginTransaction();
+
+        Cursor pharmacyCursor = null;
+
+        try {
+
+            // Vérifier que la pharmacie existe
+            pharmacyCursor = db.rawQuery(
+                    "SELECT id FROM pharmacies WHERE id = ?",
+                    new String[]{String.valueOf(pharmacyId)}
+            );
+
+            boolean pharmacyExists = pharmacyCursor.moveToFirst();
+
+            pharmacyCursor.close();
+            pharmacyCursor = null;
+
+            if (!pharmacyExists) {
+                return "Pharmacie introuvable. ID = " + pharmacyId;
+            }
+
+            // Insérer le médicament
+            ContentValues medicineValues = new ContentValues();
+
+            medicineValues.put("name", name.trim());
+            medicineValues.put("dosage", dosage.trim());
+            medicineValues.put("category", category.trim());
+            medicineValues.put("description", description.trim());
+
+            long medicineId = db.insertOrThrow(
+                    "medicaments",
+                    null,
+                    medicineValues
+            );
+
+            // Insérer le stock
+            ContentValues stockValues = new ContentValues();
+
+            stockValues.put("pharmacy_id", pharmacyId);
+            stockValues.put("medicament_id", medicineId);
+            stockValues.put("quantity", quantity);
+
+            long stockId = db.insertOrThrow(
+                    "pharmacy_medicaments",
+                    null,
+                    stockValues
+            );
+
+            if (stockId == -1) {
+                return "Impossible d'enregistrer le stock.";
+            }
+
+            db.setTransactionSuccessful();
+
+            return "SUCCESS";
+
+        } catch (Exception e) {
+
+            return "Erreur SQLite : " + e.getMessage();
+
+        } finally {
+
+            if (pharmacyCursor != null) {
+                pharmacyCursor.close();
+            }
+
+            db.endTransaction();
+        }
+    }
+
+    // =====================================================
+    // ENREGISTRER UNE RECHERCHE INFRUCTUEUSE
+    // =====================================================
+
     public boolean recordFailedSearch(String medicineName) {
 
         if (medicineName == null || medicineName.trim().isEmpty()) {
@@ -421,10 +661,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.insert("failed_searches", null, values) != -1;
     }
 
-    // Récupérer les médicaments recherchés et le nombre de recherches
+    // =====================================================
+    // RÉSUMÉ DES RECHERCHES INFRUCTUEUSES
+    // =====================================================
+
     public ArrayList<String> getFailedSearchesSummary() {
 
         ArrayList<String> list = new ArrayList<>();
+
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(
@@ -436,20 +680,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         );
 
         if (cursor.moveToFirst()) {
+
             do {
+
                 String medicine = cursor.getString(0);
                 int total = cursor.getInt(1);
 
-                list.add(medicine + " — " + total + " recherche(s)");
+                list.add(
+                        medicine + " — " + total + " recherche(s)"
+                );
 
             } while (cursor.moveToNext());
         }
 
         cursor.close();
+
         return list;
     }
 
-    // Nombre total de recherches infructueuses
+    // =====================================================
+    // NOMBRE TOTAL DE RECHERCHES INFRUCTUEUSES
+    // =====================================================
+
     public int getFailedSearchesCount() {
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -466,6 +718,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         cursor.close();
+
         return count;
     }
 }

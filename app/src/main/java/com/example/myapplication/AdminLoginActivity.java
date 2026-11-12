@@ -1,20 +1,21 @@
+
 package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class AdminLoginActivity extends AppCompatActivity {
 
-    private EditText etEmail;
-    private EditText etPassword;
-    private Button btnLogin;
-
-    private DatabaseHelper dbHelper;
+    EditText etEmail, etPassword;
+    Button btnLogin;
+    TextView tvSignup;
+    DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,76 +27,55 @@ public class AdminLoginActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
+        tvSignup = findViewById(R.id.tvSignup);
 
         btnLogin.setOnClickListener(v -> login());
+
+        tvSignup.setOnClickListener(v -> {
+            Intent intent = new Intent(
+                    AdminLoginActivity.this,
+                    SignupActivity.class);
+            startActivity(intent);
+        });
     }
 
-    // Vérifier les identifiants et rediriger selon le rôle
     private void login() {
 
         String email = etEmail.getText().toString().trim();
-        String password = etPassword.getText().toString().trim();
+        String password = etPassword.getText().toString();
 
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(
-                    this,
-                    "Veuillez saisir votre email et votre mot de passe",
-                    Toast.LENGTH_SHORT
-            ).show();
+            Toast.makeText(this,
+                    "Veuillez remplir tous les champs",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // CONNEXION ADMINISTRATEUR
         if (dbHelper.checkAdmin(email, password)) {
-
-            Intent intent = new Intent(
-                    AdminLoginActivity.this,
-                    AdminDashboardActivity.class
-            );
-
-            startActivity(intent);
+            startActivity(new Intent(this,
+                    AdminDashboardActivity.class));
             finish();
 
-            return;
-        }
+        } else if (dbHelper.checkPharmacist(email, password)) {
 
-        // CONNEXION PHARMACIEN
-        if (dbHelper.checkPharmacist(email, password)) {
-
-            // Récupérer l'identifiant de la pharmacie
             long pharmacyId = dbHelper.getPharmacyIdByOwnerEmail(email);
-
             if (pharmacyId == -1) {
-
-                Toast.makeText(
-                        this,
-                        "Aucune pharmacie associée à ce compte",
-                        Toast.LENGTH_LONG
-                ).show();
-
+                Toast.makeText(this,
+                        "Votre compte n'est pas encore associé à une pharmacie",
+                        Toast.LENGTH_LONG).show();
                 return;
             }
 
-            // Ouvrir le dashboard pharmacien
-            Intent intent = new Intent(
-                    AdminLoginActivity.this,
-                    PharmacistDashboardActivity.class
-            );
-
-            // Transmettre l'identifiant de la pharmacie
+            Intent intent = new Intent(this,
+                    PharmacistDashboardActivity.class);
             intent.putExtra("pharmacy_id", pharmacyId);
-
             startActivity(intent);
             finish();
 
-            return;
+        } else {
+            Toast.makeText(this,
+                    "Email ou mot de passe incorrect, ou compte en attente",
+                    Toast.LENGTH_LONG).show();
         }
-
-        // Identifiants incorrects
-        Toast.makeText(
-                this,
-                "Email ou mot de passe incorrect",
-                Toast.LENGTH_SHORT
-        ).show();
     }
 }

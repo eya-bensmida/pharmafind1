@@ -2,155 +2,70 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EAF4ED"
-    android:fillViewport="true">
+    android:background="#F5F8F6">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:gravity="center"
         android:padding="24dp">
 
-        <!-- En-tête vert -->
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#147D50"
+            android:text="PharmaFind"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="#287B5B"
             android:gravity="center"
-            android:orientation="vertical"
-            android:padding="28dp">
+            android:layout_marginTop="60dp"/>
 
-            <ImageView
-                android:layout_width="65dp"
-                android:layout_height="65dp"
-                android:src="@android:drawable/ic_menu_info_details"
-                android:tint="#FFFFFF"
-                android:contentDescription="Logo PharmaFind" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="PharmaFind"
-                android:textColor="#FFFFFF"
-                android:textSize="30sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="Espace administrateur"
-                android:textColor="#E2F5E9"
-                android:textSize="16sp" />
-
-        </LinearLayout>
-
-        <!-- Formulaire -->
-        <androidx.cardview.widget.CardView
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            app:cardCornerRadius="18dp"
-            app:cardElevation="6dp"
-            xmlns:app="http://schemas.android.com/apk/res-auto">
+            android:text="Connectez-vous à votre espace"
+            android:textSize="18sp"
+            android:textColor="#173F35"
+            android:gravity="center"
+            android:layout_marginTop="15dp"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="24dp">
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="Adresse email"
+            android:inputType="textEmailAddress"
+            android:layout_marginTop="40dp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Bienvenue !"
-                    android:textColor="#176B46"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="Mot de passe"
+            android:inputType="textPassword"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:layout_marginBottom="24dp"
-                    android:text="Connectez-vous pour gérer les pharmacies."
-                    android:textColor="#718078"
-                    android:textSize="14sp" />
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:text="Se connecter"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#287B5B"
+            android:layout_marginTop="25dp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Adresse e-mail"
-                    android:textColor="#263C30"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/etEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="55dp"
-                    android:layout_marginTop="8dp"
-                    android:backgroundTint="#168354"
-                    android:hint="Saisir votre e-mail"
-                    android:inputType="textEmailAddress"
-                    android:padding="12dp"
-                    android:textColor="#263C30"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="Mot de passe"
-                    android:textColor="#263C30"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/etPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="55dp"
-                    android:layout_marginTop="8dp"
-                    android:backgroundTint="#168354"
-                    android:hint="Saisir votre mot de passe"
-                    android:inputType="textPassword"
-                    android:padding="12dp"
-                    android:textColor="#263C30"
-                    android:textSize="15sp" />
-
-                <Button
-                    android:id="@+id/btnLogin"
-                    android:layout_width="match_parent"
-                    android:layout_height="55dp"
-                    android:layout_marginTop="28dp"
-                    android:backgroundTint="#147D50"
-                    android:text="Se connecter"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <ProgressBar
-                    android:id="@+id/progressBar"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="12dp"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:gravity="center"
-                    android:text="Accès réservé à l'administration"
-                    android:textColor="#829087"
-                    android:textSize="12sp" />
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
+        <TextView
+            android:id="@+id/tvSignup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Vous n'avez pas un compte ? Créer un compte"
+            android:textColor="#287B5B"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:padding="18dp"
+            android:clickable="true"
+            android:focusable="true"/>
 
     </LinearLayout>
-
 </ScrollView>
