@@ -30,6 +30,7 @@ public class AdminLoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(v -> login());
     }
 
+    // Vérifier les identifiants et rediriger selon le rôle
     private void login() {
 
         String email = etEmail.getText().toString().trim();
@@ -44,6 +45,7 @@ public class AdminLoginActivity extends AppCompatActivity {
             return;
         }
 
+        // CONNEXION ADMINISTRATEUR
         if (dbHelper.checkAdmin(email, password)) {
 
             Intent intent = new Intent(
@@ -54,12 +56,46 @@ public class AdminLoginActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
 
-        } else {
-            Toast.makeText(
-                    this,
-                    "Email ou mot de passe incorrect",
-                    Toast.LENGTH_SHORT
-            ).show();
+            return;
         }
+
+        // CONNEXION PHARMACIEN
+        if (dbHelper.checkPharmacist(email, password)) {
+
+            // Récupérer l'identifiant de la pharmacie
+            long pharmacyId = dbHelper.getPharmacyIdByOwnerEmail(email);
+
+            if (pharmacyId == -1) {
+
+                Toast.makeText(
+                        this,
+                        "Aucune pharmacie associée à ce compte",
+                        Toast.LENGTH_LONG
+                ).show();
+
+                return;
+            }
+
+            // Ouvrir le dashboard pharmacien
+            Intent intent = new Intent(
+                    AdminLoginActivity.this,
+                    PharmacistDashboardActivity.class
+            );
+
+            // Transmettre l'identifiant de la pharmacie
+            intent.putExtra("pharmacy_id", pharmacyId);
+
+            startActivity(intent);
+            finish();
+
+            return;
+        }
+
+        // Identifiants incorrects
+        Toast.makeText(
+                this,
+                "Email ou mot de passe incorrect",
+                Toast.LENGTH_SHORT
+        ).show();
     }
 }

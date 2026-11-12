@@ -7,26 +7,54 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
 
+        <!-- Espace propriétaire -->
         <activity
             android:name=".OwnerProfileActivity"
             android:exported="false" />
 
+        <!-- Recherche échouée -->
         <activity
             android:name=".FailedSearchesActivity"
             android:exported="false" />
 
+        <!-- Modification pharmacie -->
         <activity
             android:name=".EditPharmacyActivity"
             android:exported="false" />
 
+        <!-- Ajout pharmacie -->
         <activity
             android:name=".AddPharmacyActivity"
             android:exported="false" />
 
+        <!-- Tableau de bord administrateur -->
         <activity
             android:name=".AdminDashboardActivity"
             android:exported="false" />
 
+        <!-- Tableau de bord pharmacien -->
+        <activity
+            android:name=".PharmacistDashboardActivity"
+            android:exported="false" />
+
+        <!-- AJOUT : Profil pharmacien -->
+        <activity
+            android:name=".PharmacistProfileActivity"
+            android:exported="false" />
+
+        <!-- Gestion des médicaments -->
+        <activity
+            android:name=".ManageMedicinesActivity"
+            android:exported="false" />
+
+        <!-- Ajout d'un médicament -->
+        <activity
+            android:name=".AddMedicineActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EditMedicineActivity"
+            android:exported="false" />
+        <!-- Connexion administrateur : écran de démarrage -->
         <activity
             android:name=".AdminLoginActivity"
             android:exported="true">

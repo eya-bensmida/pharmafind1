@@ -1,3 +1,4 @@
+
 package com.example.myapplication;
 
 import android.content.ContentValues;
@@ -26,6 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
+        // Création de la table des utilisateurs
         db.execSQL(
                 "CREATE TABLE users (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -37,6 +39,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "status TEXT DEFAULT 'active')"
         );
 
+        // Création de la table des pharmacies
         db.execSQL(
                 "CREATE TABLE pharmacies (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -46,13 +49,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "FOREIGN KEY(owner_id) REFERENCES users(id))"
         );
 
+        // Création de la table des médicaments
         db.execSQL(
                 "CREATE TABLE medicaments (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         "name TEXT NOT NULL, " +
-                        "dosage TEXT)"
+                        "dosage TEXT NOT NULL, " +
+                        "category TEXT, " +
+                        "description TEXT)"
         );
 
+        // Création de la table d'association pharmacie-médicaments
         db.execSQL(
                 "CREATE TABLE pharmacy_medicaments (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -63,6 +70,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "FOREIGN KEY(medicament_id) REFERENCES medicaments(id))"
         );
 
+        // Création de la table des recherches infructueuses
         db.execSQL(
                 "CREATE TABLE failed_searches (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -81,16 +89,81 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.insert("users", null, admin);
 
-        // Médicaments de démonstration
+        // AJOUT 1 : Créer le compte pharmacien de démonstration
+        ContentValues pharmacist = new ContentValues();
+        pharmacist.put("full_name", "Pharmacien Test");
+        pharmacist.put("email", "pharmacien@pharmafind.com");
+        pharmacist.put("password", "Pharma123");
+        pharmacist.put("phone", "0600000000");
+        pharmacist.put("role", "owner");
+        pharmacist.put("status", "active");
+
+        long pharmacistId = db.insert("users", null, pharmacist);
+
+        // AJOUT 2 : Créer une pharmacie associée au compte pharmacien
+        if (pharmacistId != -1) {
+
+            ContentValues pharmacy = new ContentValues();
+            pharmacy.put("owner_id", pharmacistId);
+            pharmacy.put("name", "Pharmacie Test");
+            pharmacy.put("address", "Centre-ville");
+
+            db.insert("pharmacies", null, pharmacy);
+        }
+
+        // Médicament de démonstration : Doliprane
         ContentValues med1 = new ContentValues();
         med1.put("name", "Doliprane");
         med1.put("dosage", "1000 mg");
-        db.insert("medicaments", null, med1);
+        med1.put("category", "Antalgique");
+        med1.put("description", "Médicament de démonstration");
 
+        long med1Id = db.insert("medicaments", null, med1);
+
+        // Médicament de démonstration : Augmentin
         ContentValues med2 = new ContentValues();
         med2.put("name", "Augmentin");
         med2.put("dosage", "1 g");
-        db.insert("medicaments", null, med2);
+        med2.put("category", "Antibiotique");
+        med2.put("description", "Médicament de démonstration");
+
+        long med2Id = db.insert("medicaments", null, med2);
+
+        // AJOUT 3 : Associer les médicaments de démonstration à la pharmacie
+        if (pharmacistId != -1) {
+
+            Cursor pharmacyCursor = db.rawQuery(
+                    "SELECT id FROM pharmacies WHERE owner_id = ?",
+                    new String[]{String.valueOf(pharmacistId)}
+            );
+
+            if (pharmacyCursor.moveToFirst()) {
+
+                long pharmacyId = pharmacyCursor.getLong(0);
+
+                // Associer Doliprane à la pharmacie
+                if (med1Id != -1) {
+                    ContentValues association1 = new ContentValues();
+                    association1.put("pharmacy_id", pharmacyId);
+                    association1.put("medicament_id", med1Id);
+                    association1.put("quantity", 10);
+
+                    db.insert("pharmacy_medicaments", null, association1);
+                }
+
+                // Associer Augmentin à la pharmacie
+                if (med2Id != -1) {
+                    ContentValues association2 = new ContentValues();
+                    association2.put("pharmacy_id", pharmacyId);
+                    association2.put("medicament_id", med2Id);
+                    association2.put("quantity", 5);
+
+                    db.insert("pharmacy_medicaments", null, association2);
+                }
+            }
+
+            pharmacyCursor.close();
+        }
     }
 
     @Override
@@ -114,6 +187,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
 
         return result;
+    }
+
+    // AJOUT 4 : Vérifier la connexion du pharmacien
+    public boolean checkPharmacist(String email, String password) {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "SELECT id FROM users " +
+                        "WHERE email = ? AND password = ? " +
+                        "AND role = 'owner' AND status = 'active'",
+                new String[]{email, password}
+        );
+
+        boolean result = cursor.moveToFirst();
+        cursor.close();
+
+        return result;
+    }
+
+    // AJOUT 5 : Récupérer l'identifiant de la pharmacie par email du propriétaire
+    public long getPharmacyIdByOwnerEmail(String email) {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "SELECT p.id FROM pharmacies p " +
+                        "INNER JOIN users u ON p.owner_id = u.id " +
+                        "WHERE u.email = ? AND u.role = 'owner'",
+                new String[]{email}
+        );
+
+        long pharmacyId = -1;
+
+        if (cursor.moveToFirst()) {
+            pharmacyId = cursor.getLong(0);
+        }
+
+        cursor.close();
+
+        return pharmacyId;
     }
 
     // Ajouter une pharmacie et son propriétaire
