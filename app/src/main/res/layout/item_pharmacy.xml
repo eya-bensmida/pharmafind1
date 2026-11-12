@@ -16,7 +16,7 @@
         android:padding="16dp"
         android:background="#FFFFFF">
 
-        <!-- Pharmacy name -->
+        <!-- Nom de la pharmacie -->
         <TextView
             android:id="@+id/txtPharmacyName"
             android:layout_width="match_parent"
@@ -26,7 +26,7 @@
             android:textSize="19sp"
             android:textStyle="bold"/>
 
-        <!-- Address -->
+        <!-- Adresse -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
                 android:textSize="14sp"/>
         </LinearLayout>
 
-        <!-- Owner profile clickable -->
+        <!-- Profil du propriétaire -->
         <LinearLayout
             android:id="@+id/ownerProfile"
             android:layout_width="match_parent"
@@ -102,26 +102,12 @@
 
         </LinearLayout>
 
-        <!-- Action buttons -->
+        <!-- Boutons Modifier et Supprimer -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="16dp">
-
-            <Button
-                android:id="@+id/btnDetails"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:text="Voir détails"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#287B5B"/>
-
-            <Space
-                android:layout_width="10dp"
-                android:layout_height="1dp"/>
 
             <Button
                 android:id="@+id/btnEdit"
@@ -132,6 +118,21 @@
                 android:textAllCaps="false"
                 android:textColor="#287B5B"
                 android:backgroundTint="#E7F3EC"/>
+
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="1dp"/>
+
+            <Button
+                android:id="@+id/btnDelete"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="Supprimer"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:backgroundTint="#D9534F"/>
 
         </LinearLayout>
 

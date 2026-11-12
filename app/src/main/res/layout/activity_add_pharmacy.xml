@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F8F6">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ajouter une pharmacie"
+            android:textColor="#173F35"
+            android:textSize="25sp"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/edtNewName"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="Nom de la pharmacie"
+            android:layout_marginTop="25dp"/>
+
+        <EditText
+            android:id="@+id/edtNewAddress"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="Adresse"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Informations du propriétaire"
+            android:textColor="#173F35"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginTop="25dp"/>
+
+        <EditText
+            android:id="@+id/edtNewOwner"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="Nom du propriétaire"/>
+
+        <EditText
+            android:id="@+id/edtNewEmail"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="Email"
+            android:inputType="textEmailAddress"/>
+
+        <EditText
+            android:id="@+id/edtNewPhone"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="Téléphone"
+            android:inputType="phone"/>
+
+        <Button
+            android:id="@+id/btnCreatePharmacy"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:text="Ajouter la pharmacie"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#287B5B"
+            android:layout_marginTop="25dp"/>
+
+    </LinearLayout>
+</ScrollView>

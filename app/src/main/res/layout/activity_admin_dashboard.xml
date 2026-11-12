@@ -59,7 +59,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dashboard"
+                android:text="Espace Administrateur"
                 android:textSize="26sp"
                 android:textStyle="bold"
                 android:textColor="#173F35"/>
@@ -84,6 +84,17 @@
                 android:textColor="#FFFFFF"
                 android:backgroundTint="#287B5B"
                 android:layout_marginTop="22dp"/>
+
+            <Button
+                android:id="@+id/btnFailedSearches"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Consulter les recherches infructueuses"
+                android:textAllCaps="false"
+                android:textColor="#287B5B"
+                android:backgroundTint="#E7F3EC"
+                android:layout_marginTop="10dp"/>
+
 
             <!-- SEARCH -->
             <EditText
