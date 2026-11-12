@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F8F6"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="45dp"
+        android:paddingBottom="25dp">
+
+        <!-- En-tête -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PharmaFind"
+            android:textColor="#218C58"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <!-- Titre -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="Ajouter un médicament"
+            android:textColor="#26352C"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Remplissez les informations du médicament"
+            android:textColor="#718078"
+            android:textSize="14sp" />
+
+        <!-- Nom -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:text="Nom du médicament"
+            android:textColor="#26352C"
+            android:textStyle="bold"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/edtMedicineName"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="8dp"
+            android:background="#FFFFFF"
+            android:hint="Ex : Doliprane"
+            android:padding="14dp"
+            android:singleLine="true"
+            android:textSize="15sp" />
+
+        <!-- Dosage -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="Dosage"
+            android:textColor="#26352C"
+            android:textStyle="bold"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/edtMedicineDosage"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="8dp"
+            android:background="#FFFFFF"
+            android:hint="Ex : 500 mg"
+            android:padding="14dp"
+            android:singleLine="true"
+            android:textSize="15sp" />
+
+        <!-- Catégorie -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="Catégorie"
+            android:textColor="#26352C"
+            android:textStyle="bold"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/edtMedicineCategory"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="8dp"
+            android:background="#FFFFFF"
+            android:hint="Ex : Antalgique"
+            android:padding="14dp"
+            android:singleLine="true"
+            android:textSize="15sp" />
+
+        <!-- Quantité -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="Quantité disponible"
+            android:textColor="#26352C"
+            android:textStyle="bold"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/edtMedicineQuantity"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="8dp"
+            android:background="#FFFFFF"
+            android:hint="Ex : 50"
+            android:inputType="number"
+            android:padding="14dp"
+            android:singleLine="true"
+            android:textSize="15sp" />
+
+        <!-- Description -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="Description"
+            android:textColor="#26352C"
+            android:textStyle="bold"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/edtMedicineDescription"
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:layout_marginTop="8dp"
+            android:background="#FFFFFF"
+            android:gravity="top"
+            android:hint="Description du médicament..."
+            android:padding="14dp"
+            android:textSize="15sp" />
+
+        <!-- Enregistrer -->
+        <Button
+            android:id="@+id/btnSaveMedicine"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="28dp"
+            android:backgroundTint="#218C58"
+            android:text="Enregistrer le médicament"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+</ScrollView>

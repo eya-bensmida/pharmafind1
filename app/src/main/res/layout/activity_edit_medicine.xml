@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F8F6"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- En-tête PharmaFind -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="20dp"
+            android:background="#E1F2E8">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="PharmaFind"
+                android:textColor="#218C58"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:text="MODIFIER LE MÉDICAMENT"
+                android:textColor="#14532D"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:padding="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Modifiez les informations et mettez à jour votre stock."
+                android:textColor="#52665A"
+                android:textSize="14sp"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <!-- Informations générales -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:background="#FFFFFF"
+            android:elevation="3dp"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1. Informations générales"
+                android:textColor="#218C58"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <!-- Nom -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Nom du médicament"
+                android:textColor="#26352C"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edtEditMedicineName"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="7dp"
+                android:background="#F5F8F6"
+                android:hint="Ex : Doliprane"
+                android:padding="12dp"
+                android:singleLine="true"
+                android:inputType="textCapSentences" />
+
+            <!-- Dosage -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Dosage"
+                android:textColor="#26352C"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edtEditMedicineDosage"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="7dp"
+                android:background="#F5F8F6"
+                android:hint="Ex : 1000 mg"
+                android:padding="12dp"
+                android:singleLine="true" />
+
+            <!-- Catégorie -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Catégorie"
+                android:textColor="#26352C"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edtEditMedicineCategory"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="7dp"
+                android:background="#F5F8F6"
+                android:hint="Ex : Antalgique"
+                android:padding="12dp"
+                android:singleLine="true" />
+
+            <!-- Description -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Description"
+                android:textColor="#26352C"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edtEditMedicineDescription"
+                android:layout_width="match_parent"
+                android:layout_height="110dp"
+                android:layout_marginTop="7dp"
+                android:background="#F5F8F6"
+                android:gravity="top"
+                android:hint="Description du médicament..."
+                android:inputType="textMultiLine"
+                android:padding="12dp" />
+
+        </LinearLayout>
+
+        <!-- Gestion du stock -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:background="#FFFFFF"
+            android:elevation="3dp"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2. Gestion du stock"
+                android:textColor="#218C58"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="Quantité disponible"
+                android:textColor="#26352C"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edtEditMedicineQuantity"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="7dp"
+                android:background="#F5F8F6"
+                android:hint="Ex : 20"
+                android:inputType="number"
+                android:padding="12dp"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <!-- Bouton Enregistrer -->
+        <Button
+            android:id="@+id/btnSaveMedicine"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:layout_marginTop="25dp"
+            android:backgroundTint="#218C58"
+            android:text="Enregistrer les modifications"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- Bouton Annuler -->
+        <Button
+            android:id="@+id/btnCancelMedicine"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="#E5ECE7"
+            android:text="Annuler"
+            android:textAllCaps="false"
+            android:textColor="#26352C"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+</ScrollView>
