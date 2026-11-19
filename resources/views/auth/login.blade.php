@@ -208,6 +208,22 @@
             .login-brand { display: none; }
             .login-form { padding: 45px 28px; }
         }
+        .login-link {
+    text-align: center;
+    color: #82919B;
+    font-size: 12px;
+    margin-top: 18px;
+}
+
+.login-link a {
+    color: #16A6A0;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
     </style>
 </head>
 <body>
@@ -248,6 +264,12 @@
         <p class="subtitle">
             Connectez-vous à votre espace administrateur.
         </p>
+        @if (session('success'))
+    <div style="background:#EAF8F1; border:1px solid #C8EBDD; color:#18794E; padding:12px; border-radius:8px; font-size:12px; margin-bottom:20px;">
+        <i class="bi bi-check-circle me-1"></i>
+        {{ session('success') }}
+    </div>
+@endif
 
         @if ($errors->any())
             <div class="error-message">
@@ -295,6 +317,10 @@
                 <i class="bi bi-arrow-right ms-2"></i>
             </button>
         </form>
+        <div class="login-link">
+    Vous n'avez pas encore de compte ?
+    <a href="{{ route('register') }}">Créer un compte</a>
+</div>
 
         <div class="security-note">
             <i class="bi bi-shield-check"></i>

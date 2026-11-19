@@ -196,16 +196,16 @@
         Propositions
     </a>
 
-    <a href="#">
-        <i class="bi bi-search"></i>
-        Recherches sans résultat
-    </a>
-
-    <a href="#">
-        <i class="bi bi-people"></i>
-        Utilisateurs
-    </a>
-
+   <a href="{{ route('admin.failed-searches.index') }}"
+   class="{{ request()->routeIs('admin.failed-searches.*') ? 'active' : '' }}">
+    <i class="bi bi-search"></i>
+    Recherches sans résultat
+</a>
+    <a href="{{ route('admin.users.index') }}"
+   class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+    <i class="bi bi-people"></i>
+    Utilisateurs
+</a>
     <div class="menu-label">Compte</div>
 
     <form method="POST" action="{{ route('logout') }}">
