@@ -1,4 +1,3 @@
-
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -12,8 +11,11 @@ return new class extends Migration
         Schema::create('medicine_proposals', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('pharmacy_id')
-                ->constrained('pharmacies')
+            $table->integer('pharmacy_id');
+
+            $table->foreign('pharmacy_id')
+                ->references('id')
+                ->on('pharmacies')
                 ->cascadeOnDelete();
 
             $table->string('name');

@@ -4,25 +4,89 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PharmacyController;
+use App\Http\Controllers\MedicamentController;
+use App\Http\Controllers\PharmacistProfileController;
+use App\Http\Controllers\PharmacistRegistrationController;
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+// Connexion et déconnexion
+Route::get('/login', [AuthController::class, 'showLogin'])
+    ->name('login');
 
+Route::post('/login', [AuthController::class, 'login'])
+    ->name('login.submit');
+
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->name('logout');
+
+// Inscription d'une pharmacie
+Route::get('/inscription-pharmacie',
+    [PharmacistRegistrationController::class, 'create']
+)->name('pharmacien.register');
+
+Route::post('/inscription-pharmacie',
+    [PharmacistRegistrationController::class, 'store']
+)->name('pharmacien.register.store');
+
+// Administration
 Route::middleware(['auth', 'role:admin'])->group(function () {
+
     Route::get('/admin', [AdminController::class, 'dashboard'])
         ->name('admin.dashboard');
 
-    Route::get('/admin/pharmacies', [PharmacyController::class, 'index'])
-        ->name('admin.pharmacies.index');
+    // Demandes de création d'espaces pharmacies
+    Route::get('/admin/demandes-pharmacies',
+        [PharmacyController::class, 'requests']
+    )->name('admin.pharmacies.requests');
 
-    Route::patch('/admin/pharmacies/{pharmacy}/approve', [PharmacyController::class, 'approve'])
-        ->name('admin.pharmacies.approve');
+    Route::get('/admin/demandes-pharmacies/{pharmacy}',
+        [PharmacyController::class, 'showRequest']
+    )->name('admin.pharmacies.show');
 
-    Route::patch('/admin/pharmacies/{pharmacy}/reject', [PharmacyController::class, 'reject'])
-        ->name('admin.pharmacies.reject');
+    Route::get('/admin/demandes-pharmacies/{pharmacy}/document/{type}',
+        [PharmacyController::class, 'document']
+    )->name('admin.pharmacies.document');
+
+    Route::patch('/admin/demandes-pharmacies/{pharmacy}/approve',
+        [PharmacyController::class, 'approve']
+    )->name('admin.pharmacies.approve');
+
+    Route::patch('/admin/demandes-pharmacies/{pharmacy}/reject',
+        [PharmacyController::class, 'reject']
+    )->name('admin.pharmacies.reject');
+
+    // Pharmacies déjà approuvées
+    Route::get('/admin/pharmacies',
+        [PharmacyController::class, 'index']
+    )->name('admin.pharmacies.index');
 });
+
+
+// Espace pharmacien
+Route::middleware(['auth', 'role:owner'])
+    ->prefix('pharmacien')
+    ->name('pharmacien.')
+    ->group(function () {
+
+        // Recherche intelligente et suggestions
+        Route::get('/medicaments/recherche-intelligente',
+            [MedicamentController::class, 'searchSuggestions']
+        )->name('medicaments.search');
+
+        // Gestion des médicaments
+        Route::resource('medicaments', MedicamentController::class)
+            ->except(['show']);
+
+        // Profil
+        Route::get('/profil',
+            [PharmacistProfileController::class, 'edit']
+        )->name('profile.edit');
+
+        Route::put('/profil',
+            [PharmacistProfileController::class, 'update']
+        )->name('profile.update');
+    });
+

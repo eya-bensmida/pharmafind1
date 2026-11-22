@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Pharmacy extends Model
@@ -16,6 +18,10 @@ class Pharmacy extends Model
         'latitude',
         'longitude',
         'is_approved',
+        'authorization_document_path',
+        'order_document_path',
+        'verification_status',
+        'rejection_reason',
     ];
 
     protected function casts(): array
@@ -27,8 +33,18 @@ class Pharmacy extends Model
         ];
     }
 
+    public function stocks(): HasMany
+    {
+        return $this->hasMany(PharmacyMedicament::class);
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function medicineProposals(): HasMany
+    {
+        return $this->hasMany(MedicineProposal::class);
     }
 }

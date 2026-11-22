@@ -7,13 +7,11 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // Afficher la page de connexion
     public function showLogin()
     {
         return view('auth.login');
     }
 
-    // Traiter la connexion
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -21,27 +19,40 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials)) {
+        if (!Auth::attempt($credentials)) {
+            return back()->withErrors([
+                'email' => 'Adresse e-mail ou mot de passe incorrect.',
+            ])->onlyInput('email');
+        }
 
-            $request->session()->regenerate();
+        $request->session()->regenerate();
 
-            if (Auth::user()->role !== 'admin') {
-                Auth::logout();
+        $user = Auth::user();
 
-                return back()->withErrors([
-                    'email' => 'Accès réservé aux administrateurs.',
-                ])->onlyInput('email');
-            }
+        if ($user->account_status !== 'active') {
+            Auth::logout();
 
+            return back()->withErrors([
+                'email' => 'Votre compte n’est pas encore activé. '
+                    .'Veuillez attendre la validation de votre demande.',
+            ])->onlyInput('email');
+        }
+
+        if ($user->role === 'admin') {
             return redirect()->route('admin.dashboard');
         }
 
+        if ($user->role === 'owner') {
+            return redirect()->route('pharmacien.medicaments.index');
+        }
+
+        Auth::logout();
+
         return back()->withErrors([
-            'email' => 'Adresse e-mail ou mot de passe incorrect.',
-        ])->onlyInput('email');
+            'email' => 'Vous ne disposez pas d’un accès à cet espace.',
+        ]);
     }
 
-    // Déconnexion
     public function logout(Request $request)
     {
         Auth::logout();

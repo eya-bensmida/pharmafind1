@@ -245,8 +245,9 @@
         </div>
 
         <h2>Bienvenue</h2>
+
         <p class="subtitle">
-            Connectez-vous à votre espace administrateur.
+            Connectez-vous à votre espace PharmaFind.
         </p>
 
         @if ($errors->any())
@@ -268,7 +269,7 @@
                         id="email"
                         name="email"
                         value="{{ old('email') }}"
-                        placeholder="admin@pharmafind.tn"
+                        placeholder="votre@email.tn"
                         required
                         autocomplete="username"
                     >
@@ -294,11 +295,22 @@
                 Se connecter
                 <i class="bi bi-arrow-right ms-2"></i>
             </button>
+
+            <div class="text-center mt-4">
+                <p class="text-muted" style="font-size:13px;">
+                    Vous êtes pharmacien et vous n'avez pas encore de compte ?
+                </p>
+
+                <a href="{{ route('pharmacien.register') }}"
+                   style="color:#16A6A0;font-weight:700;text-decoration:none;">
+                    Demander la création de mon espace pharmacie
+                </a>
+            </div>
         </form>
 
         <div class="security-note">
             <i class="bi bi-shield-check"></i>
-            Connexion sécurisée — Espace réservé aux administrateurs
+            Connexion sécurisée — Accès réservé aux utilisateurs autorisés
         </div>
     </section>
 

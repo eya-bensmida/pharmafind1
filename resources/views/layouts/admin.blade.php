@@ -180,6 +180,11 @@
 
     <div class="menu-label">Administration</div>
 
+    <a href="{{ route('admin.pharmacies.requests') }}"
+   class="{{ request()->routeIs('admin.pharmacies.requests') || request()->routeIs('admin.pharmacies.show') ? 'active' : '' }}">
+    <i class="bi bi-clipboard2-check"></i>
+    Demandes de pharmacies
+</a>
     <a href="{{ route('admin.pharmacies.index') }}"
        class="{{ request()->routeIs('admin.pharmacies.*') ? 'active' : '' }}">
         <i class="bi bi-hospital"></i>
