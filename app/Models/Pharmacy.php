@@ -17,6 +17,7 @@ class Pharmacy extends Model
         'phone',
         'latitude',
         'longitude',
+        'osm_id',
         'is_approved',
         'authorization_document_path',
         'order_document_path',
