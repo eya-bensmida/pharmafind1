@@ -378,6 +378,13 @@ class MedicamentController extends Controller
             'declared_quantity' => $validated['declared_quantity'],
             'updated_stock_at' => now(),
         ]);
+        
+                if ($request->expectsJson()) {
+            return response()->json([
+                'quantity'   => $stock->declared_quantity,
+                'updated_at' => $stock->updated_stock_at->locale('fr')->diffForHumans(),
+            ]);
+        }
 
         return redirect()
             ->route('pharmacien.medicaments.index')

@@ -1,519 +1,486 @@
+@extends('layouts.pharmacien')
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@section('title', 'Ajouter un médicament - PharmaFind')
+@section('topbar', 'Ajouter un médicament')
 
-    <title>Ajouter un médicament - PharmaFind</title>
+@push('styles')
+<style>
+    .step-badge {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--teal);
+        color: #fff;
+        font-weight: 800;
+        font-size: 14px;
+        display: inline-grid;
+        place-items: center;
+        margin-right: 10px;
+    }
 
-    <style>
-        * { box-sizing: border-box; }
+    .big-search { position: relative; }
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f7f6;
-            margin: 0;
-            padding: 30px 15px;
-            color: #263238;
-        }
+    .big-search i.bi-search {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--teal);
+        font-size: 18px;
+        pointer-events: none;
+    }
 
-        .container {
-            max-width: 850px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 14px;
-            box-shadow: 0 4px 20px rgba(0,0,0,.06);
-        }
+    .big-search input { height: 58px; padding-left: 50px; font-size: 16px; border-width: 2px; }
 
-        h1 { color: #167d63; }
+    #suggestions {
+        display: none;
+        margin-top: 10px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 14px 34px rgba(18,59,74,.12);
+        max-height: 360px;
+        overflow-y: auto;
+    }
 
-        .subtitle { color: #64748b; }
+    .sg-item {
+        padding: 13px 16px;
+        border-bottom: 1px solid var(--line);
+        cursor: pointer;
+        transition: background .15s;
+    }
 
-        .section-title {
-            color: #167d63;
-            font-size: 18px;
-            margin: 28px 0 15px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #e5e7eb;
-        }
+    .sg-item:last-child { border-bottom: none; }
+    .sg-item:hover, .sg-item.active { background: #F0FBFA; }
+    .sg-item .t { font-weight: 700; color: var(--navy); }
+    .sg-item .d { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+    .sg-msg { padding: 16px; color: var(--muted); text-align: center; font-size: 14px; }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 18px;
-        }
+    .score {
+        float: right;
+        font-size: 11.5px;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 999px;
+        background: rgba(22,166,160,.14);
+        color: #0e7f7a;
+    }
 
-        .field { margin-bottom: 15px; }
+    .fact {
+        background: #F8FBFC;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px 14px;
+        height: 100%;
+    }
 
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
+    .fact .k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 700; }
+    .fact .v { font-weight: 600; color: var(--navy); margin-top: 3px; word-break: break-word; }
 
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 7px;
-            font-size: 15px;
-        }
+    #previewCard { display: none; border: 2px solid rgba(22,166,160,.35); }
+    #previewCard.show { display: block; animation: fadeUp .5s ease; }
 
-        input[readonly], textarea[readonly] {
-            background: #f1f5f9;
-            cursor: not-allowed;
-        }
+    .stepper-lg {
+        display: flex;
+        align-items: center;
+        background: #F3F7F9;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        overflow: hidden;
+    }
 
-        input:focus {
-            outline: none;
-            border-color: #167d63;
-        }
+    .stepper-lg button {
+        width: 56px;
+        height: 56px;
+        border: none;
+        background: transparent;
+        font-size: 20px;
+        color: var(--navy);
+        transition: .15s;
+    }
 
-        .full { grid-column: 1 / -1; }
+    .stepper-lg button:hover { background: var(--teal); color: #fff; }
 
-        .suggestions {
-            display: none;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            margin-top: 5px;
-            max-height: 300px;
-            overflow-y: auto;
-            background: white;
-            position: relative;
-            z-index: 10;
-        }
+    .stepper-lg input {
+        flex: 1;
+        min-width: 0;
+        height: 56px;
+        border: none;
+        text-align: center;
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--navy);
+        background: #fff;
+        -moz-appearance: textfield;
+    }
 
-        .suggestion {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-        }
+    .stepper-lg input::-webkit-outer-spin-button,
+    .stepper-lg input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-        .suggestion:hover { background: #eff6ff; }
+    .stepper-lg input:focus { outline: none; background: #F0FBFA; }
 
-        .suggestion strong { color: #167d63; }
+    .preset {
+        border: 1px dashed #BFD0D6;
+        background: #fff;
+        border-radius: 999px;
+        padding: 5px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--navy);
+        transition: .15s;
+    }
 
-        .suggestion small {
-            display: block;
-            color: #64748b;
-            margin-top: 5px;
-        }
+    .preset:hover { border-color: var(--teal); background: rgba(22,166,160,.08); }
+</style>
+@endpush
 
-        .notice {
-            padding: 14px;
-            border-radius: 8px;
-            margin-bottom: 18px;
-            line-height: 1.5;
-        }
+@section('content')
 
-        .info { background: #eff6ff; color: #1e40af; }
-        .warning { background: #fff7ed; color: #9a3412; }
-        .success { background: #dcfce7; color: #166534; }
-
-        .selected {
-            background: #dcfce7;
-            color: #166534;
-            padding: 12px;
-            border-radius: 8px;
-            margin: 12px 0;
-            display: none;
-        }
-
-        .error {
-            color: #dc2626;
-            margin-top: 6px;
-            font-size: 13px;
-        }
-
-        .actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            margin-top: 25px;
-        }
-
-        button {
-            background: #167d63;
-            color: white;
-            border: none;
-            padding: 13px 22px;
-            border-radius: 7px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        button:disabled {
-            background: #94a3b8;
-            cursor: not-allowed;
-        }
-
-        a {
-            color: #167d63;
-            text-decoration: none;
-        }
-
-        @media(max-width: 650px) {
-            .grid { grid-template-columns: 1fr; }
-            .full { grid-column: auto; }
-            .container { padding: 20px; }
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="container">
-
-    <h1>Ajouter un médicament</h1>
-
-    <p class="subtitle">
-        Recherchez un médicament dans le catalogue officiel
-        des médicaments commercialisés en Tunisie.
-    </p>
-
-    @if(session('duplicate'))
-        <div class="notice warning">
-            <strong>Attention !</strong>
-            {{ session('duplicate') }}
-        </div>
-    @endif
-
-    @if($errors->any())
-        <div class="notice warning">
-            <strong>Veuillez corriger les erreurs :</strong>
-            @foreach($errors->all() as $error)
-                <div>{{ $error }}</div>
-            @endforeach
-        </div>
-    @endif
-
-    @if(session('success'))
-        <div class="notice success">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    <div class="notice info">
-        <strong>Recherche intelligente :</strong>
-        saisissez le nom commercial, le principe actif,
-        la catégorie ou le laboratoire.
-        Même avec une faute de frappe, PharmaFind proposera
-        les médicaments correspondants du catalogue.
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 fade-up" style="--d:0">
+    <div>
+        <h1 class="page-title">Ajouter un médicament</h1>
+        <p class="page-subtitle mb-0">
+            Recherchez-le dans le catalogue officiel des médicaments commercialisés en Tunisie.
+        </p>
     </div>
 
-    <form
-        action="{{ route('pharmacien.medicaments.store') }}"
-        method="POST"
-        id="medicamentForm"
-    >
-        @csrf
-
-        <input
-            type="hidden"
-            name="reference_id"
-            id="reference_id"
-            value="{{ old('reference_id') }}"
-        >
-
-        <h3 class="section-title">1. Recherche du médicament</h3>
-
-        <div class="field">
-            <label for="medicineSearch">
-                Nom, principe actif, catégorie ou laboratoire *
-            </label>
-
-            <input
-                type="search"
-                id="medicineSearch"
-                placeholder="Exemple : DOLIPRANE ou PARACETAMOL..."
-                autocomplete="off"
-            >
-
-            <div id="suggestions" class="suggestions"></div>
-        </div>
-
-        <div id="selectedMessage" class="selected">
-            Médicament sélectionné.
-        </div>
-
-        <h3 class="section-title">2. Informations du médicament</h3>
-
-        <div class="grid">
-
-            <div class="field full">
-                <label>Nom commercial</label>
-                <input type="text" id="name" readonly>
-            </div>
-
-            <div class="field">
-                <label>Principe actif</label>
-                <input type="text" id="active_ingredient" readonly>
-            </div>
-
-            <div class="field">
-                <label>Dosage</label>
-                <input type="text" id="dosage" readonly>
-            </div>
-
-            <div class="field">
-                <label>Forme pharmaceutique</label>
-                <input type="text" id="form" readonly>
-            </div>
-
-            <div class="field">
-                <label>Présentation</label>
-                <input type="text" id="presentation" readonly>
-            </div>
-
-            <div class="field">
-                <label>Catégorie</label>
-                <input type="text" id="category" readonly>
-            </div>
-
-            <div class="field">
-                <label>Laboratoire</label>
-                <input type="text" id="laboratory" readonly>
-            </div>
-
-            <div class="field">
-                <label>Numéro AMM</label>
-                <input type="text" id="amm" readonly>
-            </div>
-
-            <div class="field">
-                <label>Type de produit</label>
-                <input type="text" id="product_type" readonly>
-            </div>
-
-            <div class="field">
-                <label>VEIC</label>
-                <input type="text" id="veic" readonly>
-            </div>
-
-            <div class="field full">
-                <label>Indications</label>
-                <textarea id="indications" readonly></textarea>
-            </div>
-
-        </div>
-
-        <h3 class="section-title">3. Stock de la pharmacie</h3>
-
-        <div class="field">
-            <label for="declared_quantity">
-                Quantité disponible *
-            </label>
-
-            <input
-                type="number"
-                name="declared_quantity"
-                id="declared_quantity"
-                min="0"
-                value="{{ old('declared_quantity', 0) }}"
-                required
-            >
-        </div>
-
-        <div class="actions">
-
-            <button type="submit" id="submitButton" disabled>
-                Enregistrer le médicament
-            </button>
-
-            <a href="{{ route('pharmacien.medicaments.index') }}">
-                Annuler
-            </a>
-
-        </div>
-
-    </form>
-
+    <a href="{{ route('pharmacien.medicaments.index') }}" class="btn-soft">
+        <i class="bi bi-arrow-left me-2"></i>Retour au stock
+    </a>
 </div>
 
+@if(session('duplicate'))
+    <div class="alert alert-warning border-0 shadow-sm">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <strong>Attention !</strong> {{ session('duplicate') }}
+    </div>
+@endif
+
+<form action="{{ route('pharmacien.medicaments.store') }}" method="POST" id="medicamentForm">
+    @csrf
+
+    <input type="hidden" name="reference_id" id="reference_id" value="{{ old('reference_id') }}">
+
+    <div class="row g-4">
+
+        {{-- ===== Colonne gauche : recherche + fiche ===== --}}
+        <div class="col-lg-8">
+
+            <div class="pf-card p-4 fade-up" style="--d:1">
+                <h6 class="card-title-pf mb-3">
+                    <span class="step-badge">1</span>Recherche du médicament
+                </h6>
+
+                <div class="big-search">
+                    <i class="bi bi-search"></i>
+                    <input type="search" id="medicineSearch" class="form-control"
+                           placeholder="Ex : DOLIPRANE, PARACETAMOL, AMOXICILLINE..."
+                           autocomplete="off">
+                </div>
+
+                <div id="suggestions"></div>
+
+                <div class="small text-muted mt-3">
+                    <i class="bi bi-lightbulb-fill me-1" style="color:var(--warn)"></i>
+                    Saisissez le nom commercial, le principe actif, la catégorie ou le laboratoire.
+                    Même avec une faute de frappe, PharmaFind vous propose les médicaments correspondants.
+                </div>
+            </div>
+
+            <div class="pf-card p-4 mt-4" id="previewCard">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="card-title-pf mb-0">
+                        <i class="bi bi-capsule-pill me-2" style="color:var(--teal)"></i>Fiche du médicament
+                    </h6>
+                    <span class="pill pill-ok"><i class="bi bi-check-circle-fill"></i>Sélectionné</span>
+                </div>
+
+                <h4 class="fw-bold mb-3" id="f-name" style="color:var(--navy)"></h4>
+
+                <div class="row g-3">
+                    <div class="col-md-6 col-xl-4"><div class="fact"><div class="k">Principe actif</div><div class="v" id="f-active"></div></div></div>
+                    <div class="col-md-6 col-xl-4"><div class="fact"><div class="k">Dosage</div><div class="v" id="f-dosage"></div></div></div>
+                    <div class="col-md-6 col-xl-4"><div class="fact"><div class="k">Forme</div><div class="v" id="f-form"></div></div></div>
+                    <div class="col-md-6 col-xl-4"><div class="fact"><div class="k">Présentation</div><div class="v" id="f-presentation"></div></div></div>
+                    <div class="col-md-6 col-xl-4"><div class="fact"><div class="k">Catégorie</div><div class="v" id="f-category"></div></div></div>
+                    <div class="col-md-6 col-xl-4"><div class="fact"><div class="k">Laboratoire</div><div class="v" id="f-laboratory"></div></div></div>
+                    <div class="col-md-6 col-xl-4"><div class="fact"><div class="k">Numéro AMM</div><div class="v" id="f-amm"></div></div></div>
+                    <div class="col-md-6 col-xl-4"><div class="fact"><div class="k">Type de produit</div><div class="v" id="f-product_type"></div></div></div>
+                    <div class="col-md-6 col-xl-4"><div class="fact"><div class="k">VEIC</div><div class="v" id="f-veic"></div></div></div>
+                    <div class="col-12"><div class="fact"><div class="k">Indications</div><div class="v fw-normal" id="f-indications"></div></div></div>
+                </div>
+            </div>
+
+        </div>
+
+        {{-- ===== Colonne droite : quantité ===== --}}
+        <div class="col-lg-4">
+            <div class="pf-card p-4 fade-up" style="--d:2; position:sticky; top:96px">
+
+                <h6 class="card-title-pf mb-3">
+                    <span class="step-badge">2</span>Stock de la pharmacie
+                </h6>
+
+                <label for="declared_quantity" class="form-label">Quantité disponible *</label>
+
+                <div class="stepper-lg">
+                    <button type="button" id="minus" aria-label="Diminuer"><i class="bi bi-dash-lg"></i></button>
+                    <input type="number" name="declared_quantity" id="declared_quantity"
+                           min="0" value="{{ old('declared_quantity', 0) }}" required>
+                    <button type="button" id="plus" aria-label="Augmenter"><i class="bi bi-plus-lg"></i></button>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    <button type="button" class="preset" data-set="5">5</button>
+                    <button type="button" class="preset" data-set="10">10</button>
+                    <button type="button" class="preset" data-set="25">25</button>
+                    <button type="button" class="preset" data-set="50">50</button>
+                    <button type="button" class="preset" data-set="100">100</button>
+                </div>
+
+                <div class="mt-3">
+                    <span class="pill" id="qtyPill"></span>
+                </div>
+
+                <button type="submit" id="submitButton" class="btn-teal w-100 mt-4" disabled>
+                    <i class="bi bi-check2-circle me-2"></i>Enregistrer le médicament
+                </button>
+
+                <div class="small text-muted text-center mt-3" id="hint">
+                    Sélectionnez d'abord un médicament dans la liste.
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</form>
+
+@endsection
+
+@push('scripts')
 <script>
-    const searchUrl = @json(route('pharmacien.medicaments.search'));
+    (function () {
+        const searchUrl = @json(route('pharmacien.medicaments.search'));
 
-    const searchInput = document.getElementById('medicineSearch');
-    const suggestions = document.getElementById('suggestions');
-    const referenceInput = document.getElementById('reference_id');
-    const submitButton = document.getElementById('submitButton');
-    const selectedMessage = document.getElementById('selectedMessage');
+        const searchInput = document.getElementById('medicineSearch');
+        const suggestions = document.getElementById('suggestions');
+        const referenceInput = document.getElementById('reference_id');
+        const submitButton = document.getElementById('submitButton');
+        const previewCard = document.getElementById('previewCard');
+        const hint = document.getElementById('hint');
+        const qty = document.getElementById('declared_quantity');
+        const qtyPill = document.getElementById('qtyPill');
 
-    let timer = null;
-    let controller = null;
+        let timer = null;
+        let controller = null;
+        let activeIndex = -1;
 
-    function fillField(id, value) {
-        document.getElementById(id).value = value ?? '';
-    }
+        const FIELDS = {
+            'f-name': 'name',
+            'f-active': 'active_ingredient',
+            'f-dosage': 'dosage',
+            'f-form': 'form',
+            'f-presentation': 'presentation',
+            'f-category': 'category',
+            'f-laboratory': 'laboratory',
+            'f-amm': 'amm',
+            'f-product_type': 'product_type',
+            'f-veic': 'veic',
+            'f-indications': 'indications'
+        };
 
-    function selectMedicine(medicine) {
+        function setFacts(medicine) {
+            Object.keys(FIELDS).forEach(function (id) {
+                const value = medicine ? medicine[FIELDS[id]] : '';
+                document.getElementById(id).textContent = value || '—';
+            });
+        }
 
-        referenceInput.value = medicine.id;
+        function resetSelection() {
+            referenceInput.value = '';
+            submitButton.disabled = true;
+            previewCard.classList.remove('show');
+            hint.textContent = "Sélectionnez d'abord un médicament dans la liste.";
+        }
 
-        fillField('name', medicine.name);
-        fillField('active_ingredient', medicine.active_ingredient);
-        fillField('dosage', medicine.dosage);
-        fillField('form', medicine.form);
-        fillField('presentation', medicine.presentation);
-        fillField('category', medicine.category);
-        fillField('laboratory', medicine.laboratory);
-        fillField('amm', medicine.amm);
-        fillField('product_type', medicine.product_type);
-        fillField('veic', medicine.veic);
-        fillField('indications', medicine.indications);
+        function selectMedicine(medicine) {
+            referenceInput.value = medicine.id;
+            setFacts(medicine);
 
-        searchInput.value = medicine.name;
+            searchInput.value = medicine.name;
+            suggestions.style.display = 'none';
 
-        suggestions.style.display = 'none';
+            previewCard.classList.remove('show');
+            void previewCard.offsetWidth; // relance l'animation
+            previewCard.classList.add('show');
 
-        selectedMessage.style.display = 'block';
-        selectedMessage.textContent =
-            'Médicament sélectionné : ' + medicine.name;
+            submitButton.disabled = false;
+            hint.textContent = 'Indiquez la quantité puis enregistrez.';
+            previewCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
 
-        submitButton.disabled = false;
-    }
+        function createSuggestion(medicine) {
+            const item = document.createElement('div');
+            item.className = 'sg-item';
 
-    function createSuggestion(medicine) {
+            const score = document.createElement('span');
+            score.className = 'score';
+            score.textContent = medicine.score + '%';
 
-        const item = document.createElement('div');
-        item.className = 'suggestion';
+            const title = document.createElement('div');
+            title.className = 't';
+            title.textContent = medicine.name;
 
-        const title = document.createElement('strong');
-        title.textContent = medicine.name;
+            const d1 = document.createElement('div');
+            d1.className = 'd';
+            d1.textContent = 'Principe actif : ' + (medicine.active_ingredient || '—') +
+                ' · Dosage : ' + (medicine.dosage || '—') +
+                ' · Forme : ' + (medicine.form || '—');
 
-        const details = document.createElement('small');
+            const d2 = document.createElement('div');
+            d2.className = 'd';
+            d2.textContent = 'Laboratoire : ' + (medicine.laboratory || '—') +
+                ' · Catégorie : ' + (medicine.category || '—');
 
-        details.textContent =
-            'Principe actif : ' + (medicine.active_ingredient || '-') +
-            ' | Dosage : ' + (medicine.dosage || '-') +
-            ' | Forme : ' + (medicine.form || '-');
+            item.appendChild(score);
+            item.appendChild(title);
+            item.appendChild(d1);
+            item.appendChild(d2);
 
-        const additional = document.createElement('small');
+            item.addEventListener('click', function () { selectMedicine(medicine); });
+            item._medicine = medicine;
 
-        additional.textContent =
-            'Laboratoire : ' + (medicine.laboratory || '-') +
-            ' | Catégorie : ' + (medicine.category || '-') +
-            ' | Correspondance : ' + medicine.score + '%';
+            return item;
+        }
 
-        item.appendChild(title);
-        item.appendChild(details);
-        item.appendChild(additional);
+        function showMessage(text) {
+            suggestions.innerHTML = '';
+            const m = document.createElement('div');
+            m.className = 'sg-msg';
+            m.textContent = text;
+            suggestions.appendChild(m);
+            suggestions.style.display = 'block';
+        }
 
-        item.addEventListener('click', function () {
-            selectMedicine(medicine);
+        searchInput.addEventListener('input', function () {
+            clearTimeout(timer);
+            resetSelection();
+            setFacts(null);
+            activeIndex = -1;
+
+            const term = this.value.trim();
+
+            if (term.length < 2) {
+                suggestions.innerHTML = '';
+                suggestions.style.display = 'none';
+                return;
+            }
+
+            timer = setTimeout(async function () {
+
+                if (controller) controller.abort();
+                controller = new AbortController();
+
+                showMessage('Recherche en cours...');
+
+                try {
+                    const response = await fetch(searchUrl + '?q=' + encodeURIComponent(term), {
+                        headers: { 'Accept': 'application/json' },
+                        signal: controller.signal
+                    });
+
+                    if (!response.ok) throw new Error('Erreur de recherche');
+
+                    const results = await response.json();
+
+                    if (results.length === 0) {
+                        showMessage('Aucun médicament correspondant trouvé dans le catalogue.');
+                        return;
+                    }
+
+                    suggestions.innerHTML = '';
+                    results.forEach(function (medicine) {
+                        suggestions.appendChild(createSuggestion(medicine));
+                    });
+                    suggestions.style.display = 'block';
+
+                } catch (error) {
+                    if (error.name !== 'AbortError') {
+                        showMessage('Impossible de contacter le catalogue.');
+                    }
+                }
+
+            }, 300);
         });
 
-        return item;
-    }
+        // Navigation au clavier : flèches + Entrée
+        searchInput.addEventListener('keydown', function (e) {
+            const items = suggestions.querySelectorAll('.sg-item');
+            if (!items.length || suggestions.style.display === 'none') return;
 
-    searchInput.addEventListener('input', function () {
-
-        clearTimeout(timer);
-
-        referenceInput.value = '';
-        submitButton.disabled = true;
-        selectedMessage.style.display = 'none';
-
-        [
-            'name',
-            'active_ingredient',
-            'dosage',
-            'form',
-            'presentation',
-            'category',
-            'laboratory',
-            'amm',
-            'product_type',
-            'veic',
-            'indications'
-        ].forEach(id => fillField(id, ''));
-
-        const term = this.value.trim();
-
-        if (term.length < 2) {
-            suggestions.innerHTML = '';
-            suggestions.style.display = 'none';
-            return;
-        }
-
-        timer = setTimeout(async function () {
-
-            if (controller) {
-                controller.abort();
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                activeIndex = e.key === 'ArrowDown'
+                    ? Math.min(activeIndex + 1, items.length - 1)
+                    : Math.max(activeIndex - 1, 0);
+                items.forEach(function (it, i) { it.classList.toggle('active', i === activeIndex); });
+                items[activeIndex].scrollIntoView({ block: 'nearest' });
             }
 
-            controller = new AbortController();
-
-            suggestions.innerHTML = '<div class="suggestion">Recherche en cours...</div>';
-            suggestions.style.display = 'block';
-
-            try {
-
-                const response = await fetch(
-                    searchUrl + '?q=' + encodeURIComponent(term),
-                    {
-                        headers: {
-                            'Accept': 'application/json'
-                        },
-                        signal: controller.signal
-                    }
-                );
-
-                if (!response.ok) {
-                    throw new Error('Erreur de recherche');
-                }
-
-                const results = await response.json();
-
-                suggestions.innerHTML = '';
-
-                if (results.length === 0) {
-
-                    suggestions.innerHTML =
-                        '<div class="suggestion">Aucun médicament correspondant trouvé dans le catalogue.</div>';
-
-                    return;
-                }
-
-                results.forEach(function (medicine) {
-                    suggestions.appendChild(
-                        createSuggestion(medicine)
-                    );
-                });
-
-            } catch (error) {
-
-                if (error.name !== 'AbortError') {
-                    suggestions.innerHTML =
-                        '<div class="suggestion">Impossible de contacter le catalogue.</div>';
-                }
+            if (e.key === 'Enter' && activeIndex >= 0) {
+                e.preventDefault();
+                selectMedicine(items[activeIndex]._medicine);
             }
+        });
 
-        }, 300);
-    });
+        document.addEventListener('click', function (event) {
+            if (!suggestions.contains(event.target) && event.target !== searchInput) {
+                suggestions.style.display = 'none';
+            }
+        });
 
-    document.addEventListener('click', function (event) {
-
-        if (
-            !suggestions.contains(event.target) &&
-            event.target !== searchInput
-        ) {
-            suggestions.style.display = 'none';
+        // ---- Quantité ----
+        function paintQty() {
+            const q = Math.max(0, parseInt(qty.value, 10) || 0);
+            if (q <= 0) {
+                qtyPill.className = 'pill pill-out';
+                qtyPill.innerHTML = '<i class="bi bi-x-circle-fill"></i>Rupture';
+            } else if (q <= 5) {
+                qtyPill.className = 'pill pill-low';
+                qtyPill.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i>Stock faible';
+            } else {
+                qtyPill.className = 'pill pill-ok';
+                qtyPill.innerHTML = '<i class="bi bi-check-circle-fill"></i>Disponible';
+            }
         }
-    });
 
-    document.getElementById('medicamentForm')
-        .addEventListener('submit', function (event) {
+        document.getElementById('minus').addEventListener('click', function () {
+            qty.value = Math.max(0, (parseInt(qty.value, 10) || 0) - 1);
+            paintQty();
+        });
 
+        document.getElementById('plus').addEventListener('click', function () {
+            qty.value = (parseInt(qty.value, 10) || 0) + 1;
+            paintQty();
+        });
+
+        document.querySelectorAll('.preset').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                qty.value = btn.dataset.set;
+                paintQty();
+            });
+        });
+
+        qty.addEventListener('input', paintQty);
+        paintQty();
+
+        document.getElementById('medicamentForm').addEventListener('submit', function (event) {
             if (!referenceInput.value) {
                 event.preventDefault();
-                alert('Veuillez sélectionner un médicament dans le catalogue.');
+                toast('Veuillez sélectionner un médicament dans le catalogue.', 'warn');
             }
         });
-
+    })();
 </script>
-
-</body>
-</html>
+@endpush

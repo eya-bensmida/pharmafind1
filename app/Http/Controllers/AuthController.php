@@ -43,7 +43,7 @@ class AuthController extends Controller
         }
 
         if ($user->role === 'owner') {
-            return redirect()->route('pharmacien.medicaments.index');
+            return redirect()->route('pharmacien.dashboard');
         }
 
         Auth::logout();

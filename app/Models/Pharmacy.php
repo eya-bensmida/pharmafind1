@@ -14,6 +14,8 @@ class Pharmacy extends Model
         'address',
         'city',
         'region',
+        'type',
+        'osm_id',
         'phone',
         'latitude',
         'longitude',
@@ -32,6 +34,18 @@ class Pharmacy extends Model
             'latitude' => 'decimal:7',
             'longitude' => 'decimal:7',
         ];
+    }
+
+    // Lien Google Maps : $pharmacy->maps_url
+    public function getMapsUrlAttribute(): string
+    {
+        if ($this->latitude && $this->longitude) {
+            return 'https://www.google.com/maps/search/?api=1&query='
+                . $this->latitude . ',' . $this->longitude;
+        }
+
+        return 'https://www.google.com/maps/search/?api=1&query='
+            . urlencode($this->name . ' ' . $this->address . ' ' . $this->city . ' Tunisie');
     }
 
     public function stocks(): HasMany

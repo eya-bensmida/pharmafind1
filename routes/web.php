@@ -1,4 +1,3 @@
-
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -10,11 +9,13 @@ use App\Http\Controllers\PharmacistProfileController;
 use App\Http\Controllers\PharmacistRegistrationController;
 use App\Http\Controllers\CitoyenHomeController;
 use App\Http\Controllers\CitoyenSearchController;
+use App\Http\Controllers\PharmacistDashboardController;
 
-// Accueil citoyen
+// Accueil citoyen - Sprint 3
 Route::get('/', [CitoyenHomeController::class, 'home'])
     ->name('citoyen.home');
-// Recherche des pharmacies pour les citoyens
+
+// Recherche des pharmacies pour les citoyens - Sprint 3
 Route::get('/recherche', [CitoyenSearchController::class, 'search'])
     ->name('citoyen.search');
 
@@ -70,11 +71,15 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     )->name('admin.pharmacies.index');
 });
 
-// Espace pharmacien
+// Espace pharmacien - Sprint 2
 Route::middleware(['auth', 'role:owner'])
     ->prefix('pharmacien')
     ->name('pharmacien.')
     ->group(function () {
+
+        Route::get('/tableau-de-bord',
+            [PharmacistDashboardController::class, 'index']
+        )->name('dashboard');
 
         // Recherche intelligente et suggestions
         Route::get('/medicaments/recherche-intelligente',
