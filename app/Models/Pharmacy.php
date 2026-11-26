@@ -19,7 +19,6 @@ class Pharmacy extends Model
         'phone',
         'latitude',
         'longitude',
-        'osm_id',
         'is_approved',
         'authorization_document_path',
         'order_document_path',
@@ -36,28 +35,43 @@ class Pharmacy extends Model
         ];
     }
 
-    // Lien Google Maps : $pharmacy->maps_url
+    /**
+     * URL Google Maps de la pharmacie.
+     */
     public function getMapsUrlAttribute(): string
     {
-        if ($this->latitude && $this->longitude) {
+        if ($this->latitude !== null && $this->longitude !== null) {
             return 'https://www.google.com/maps/search/?api=1&query='
                 . $this->latitude . ',' . $this->longitude;
         }
 
         return 'https://www.google.com/maps/search/?api=1&query='
-            . urlencode($this->name . ' ' . $this->address . ' ' . $this->city . ' Tunisie');
+            . urlencode(
+                $this->name . ' '
+                . $this->address . ' '
+                . $this->city . ' Tunisie'
+            );
     }
 
+    /**
+     * Stocks de médicaments de cette pharmacie.
+     */
     public function stocks(): HasMany
     {
         return $this->hasMany(PharmacyMedicament::class);
     }
 
+    /**
+     * Compte utilisateur associé à cette pharmacie.
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Propositions de médicaments de cette pharmacie.
+     */
     public function medicineProposals(): HasMany
     {
         return $this->hasMany(MedicineProposal::class);

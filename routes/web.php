@@ -11,13 +11,19 @@ use App\Http\Controllers\CitoyenHomeController;
 use App\Http\Controllers\CitoyenSearchController;
 use App\Http\Controllers\PharmacistDashboardController;
 
-// Accueil citoyen - Sprint 3
+// Accueil citoyen
 Route::get('/', [CitoyenHomeController::class, 'home'])
     ->name('citoyen.home');
 
-// Recherche des pharmacies pour les citoyens - Sprint 3
-Route::get('/recherche', [CitoyenSearchController::class, 'search'])
-    ->name('citoyen.search');
+// Recherche des pharmacies pour les citoyens
+Route::get('/recherche', [CitoyenSearchController::class, 'form'])
+    ->name('citoyen.search.form');
+
+Route::get('/recherche/localites', [CitoyenSearchController::class, 'localities'])
+    ->name('citoyen.search.localities');
+
+Route::get('/recherche/resultats', [CitoyenSearchController::class, 'search'])
+    ->name('citoyen.search.results');
 
 // Connexion et déconnexion
 Route::get('/login', [AuthController::class, 'showLogin'])
@@ -33,6 +39,11 @@ Route::post('/logout', [AuthController::class, 'logout'])
 Route::get('/inscription-pharmacie',
     [PharmacistRegistrationController::class, 'create']
 )->name('pharmacien.register');
+
+// Autocomplétion des pharmacies existantes - AJAX
+Route::get('/inscription-pharmacie/recherche',
+    [PharmacistRegistrationController::class, 'searchPharmacies']
+)->name('pharmacien.register.search');
 
 Route::post('/inscription-pharmacie',
     [PharmacistRegistrationController::class, 'store']
@@ -71,7 +82,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     )->name('admin.pharmacies.index');
 });
 
-// Espace pharmacien - Sprint 2
+// Espace pharmacien
 Route::middleware(['auth', 'role:owner'])
     ->prefix('pharmacien')
     ->name('pharmacien.')

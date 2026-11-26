@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -8,54 +9,37 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // 1) supprimer l'ancienne clé étrangère, seulement si elle existe encore
-        $fkExiste = collect(Schema::getForeignKeys('pharmacies'))
-            ->contains(fn ($fk) => $fk['columns'] === ['user_id']);
-
-        if ($fkExiste) {
+        // 1. Ajouter le type de pharmacie si absent.
+        // NULL pour les pharmacies importées dont le type n'est pas vérifié.
+        if (!Schema::hasColumn('pharmacies', 'type')) {
             Schema::table('pharmacies', function (Blueprint $table) {
-                $table->dropForeign(['user_id']);
+                $table->enum('type', ['jour', 'nuit'])
+                    ->nullable()
+                    ->after('region');
             });
         }
 
-        // 2) user_id devient optionnel (pharmacies importées sans compte)
-        Schema::table('pharmacies', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->nullable()->change();
-        });
+        // 2. Ajouter l'index sur region s'il est absent.
+        $indexExiste = collect(Schema::getIndexes('pharmacies'))
+            ->contains(fn ($index) =>
+                $index['columns'] === ['region']
+            );
 
-        // 3) remettre la clé étrangère (non bloquant : si MySQL la refuse, on continue sans)
-        try {
-            Schema::table('pharmacies', function (Blueprint $table) {
-                $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
-            });
-        } catch (\Throwable $e) {
-            // la clé étrangère n'est pas indispensable au fonctionnement
-        }
-
-        // 4) nouvelles colonnes
-        if (! Schema::hasColumn('pharmacies', 'type')) {
-            Schema::table('pharmacies', function (Blueprint $table) {
-                $table->enum('type', ['jour', 'nuit'])->default('jour')->after('region');
-            });
-        }
-
-        if (! Schema::hasColumn('pharmacies', 'osm_id')) {
-            Schema::table('pharmacies', function (Blueprint $table) {
-                $table->string('osm_id')->nullable()->unique()->after('type');
-            });
-        }
-
-        if (! Schema::hasIndex('pharmacies', ['region'])) {
+        if (!$indexExiste) {
             Schema::table('pharmacies', function (Blueprint $table) {
                 $table->index('region');
             });
         }
+
+        // 3. user_id est déjà nullable et sa clé étrangère existe.
+        // 4. osm_id et son index unique existent déjà.
+        // Aucune modification nécessaire pour ces colonnes.
     }
 
     public function down(): void
     {
-        Schema::table('pharmacies', function (Blueprint $table) {
-            $table->dropColumn(['type', 'osm_id']);
-        });
+        // Ne pas supprimer les colonnes existantes :
+        // elles peuvent être utilisées par d'autres fonctionnalités.
+        // Aucun rollback destructif.
     }
 };

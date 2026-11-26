@@ -20,12 +20,15 @@
     <div class="card-body">
         <form method="GET" action="{{ route('admin.pharmacies.index') }}">
             <div class="input-group">
-                <input type="text" name="search"
-                       class="form-control"
-                       placeholder="Nom, ville ou adresse..."
-                       value="{{ $search ?? '' }}">
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Nom, ville ou adresse..."
+                    value="{{ $search ?? '' }}"
+                >
 
-                <button class="btn btn-primary">
+                <button type="submit" class="btn btn-primary">
                     <i class="bi bi-search"></i> Rechercher
                 </button>
             </div>
@@ -37,7 +40,7 @@
     <div class="card-header bg-white py-3">
         <strong>Pharmacies approuvées</strong>
         <span class="badge bg-success ms-2">
-            {{ $pharmacies->total() }}
+            {{ $pharmacies->count() }}
         </span>
     </div>
 
@@ -82,10 +85,6 @@
                 @endforelse
             </tbody>
         </table>
-    </div>
-
-    <div class="card-footer bg-white">
-        {{ $pharmacies->links() }}
     </div>
 </div>
 

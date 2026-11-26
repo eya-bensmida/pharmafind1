@@ -3,47 +3,127 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pharmacy;
+use App\Models\Medicament;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class CitoyenSearchController extends Controller
 {
+    /**
+     * Afficher le formulaire de recherche.
+     */
+    public function form()
+    {
+        $gouvernorats = Pharmacy::query()
+            ->whereNotNull('region')
+            ->where('region', '!=', '')
+            ->distinct()
+            ->orderBy('region')
+            ->pluck('region');
+
+        return view('citoyen.search-form', [
+            'gouvernorats' => $gouvernorats,
+        ]);
+    }
+
+    /**
+     * Charger les villes/localités d'un gouvernorat.
+     */
+    public function localities(Request $request)
+    {
+        $validated = $request->validate([
+            'gouvernorat' => ['required', 'string', 'max:100'],
+        ]);
+
+        $localites = Pharmacy::query()
+            ->where('region', $validated['gouvernorat'])
+            ->whereNotNull('city')
+            ->where('city', '!=', '')
+            ->distinct()
+            ->orderBy('city')
+            ->pluck('city');
+
+        return response()->json($localites);
+    }
+
+    /**
+     * Effectuer la recherche et afficher les résultats.
+     */
     public function search(Request $request)
     {
         $validated = $request->validate([
-            'medicament' => ['nullable', 'string', 'max:150'],
+            'medicament' => ['required', 'string', 'max:150'],
+            'type' => ['required', 'in:jour,nuit'],
             'gouvernorat' => ['nullable', 'string', 'max:100'],
             'ville' => ['nullable', 'string', 'max:100'],
-            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
-            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
+            'latitude' => [
+                'nullable',
+                'numeric',
+                'between:-90,90',
+                'required_with:longitude',
+            ],
+            'longitude' => [
+                'nullable',
+                'numeric',
+                'between:-180,180',
+                'required_with:latitude',
+            ],
         ]);
 
+        $validated['medicament'] = trim($validated['medicament']);
+
+        // Rechercher le médicament dans le catalogue.
+        $medicaments = Medicament::query()
+            ->where('is_active', true)
+            ->where(
+                'name',
+                'LIKE',
+                '%' . $validated['medicament'] . '%'
+            )
+            ->get();
+
+        $medicamentFound = $medicaments->isNotEmpty();
+        $medicamentIds = $medicaments->pluck('id');
+
+        // Vérifier la présence d'une position GPS.
+        $hasLocation = isset(
+            $validated['latitude'],
+            $validated['longitude']
+        );
+
+        // Rechercher uniquement les pharmacies approuvées,
+        // du type choisi, avec un stock déclaré positif.
         $query = Pharmacy::query()
-            ->whereNotNull('latitude')
-            ->whereNotNull('longitude');
+            ->where('verification_status', 'approved')
+            ->where('type', $validated['type'])
+            ->whereHas('stocks', function ($stockQuery) use ($medicamentIds) {
+                $stockQuery
+                    ->whereIn('medicament_id', $medicamentIds)
+                    ->where('declared_quantity', '>', 0);
+            })
+            ->with(['stocks' => function ($stockQuery) use ($medicamentIds) {
+                $stockQuery
+                    ->whereIn('medicament_id', $medicamentIds)
+                    ->where('declared_quantity', '>', 0)
+                    ->with('medicament');
+            }]);
 
+        // Filtrer par gouvernorat exact.
         if (!empty($validated['gouvernorat'])) {
-            $query->where('region', 'LIKE', '%' . $validated['gouvernorat'] . '%');
+            $query->where('region', $validated['gouvernorat']);
         }
 
+        // Filtrer par ville/localité exacte.
         if (!empty($validated['ville'])) {
-            $query->where('city', 'LIKE', '%' . $validated['ville'] . '%');
+            $query->where('city', $validated['ville']);
         }
 
-        if (!empty($validated['medicament'])) {
-            $keyword = $validated['medicament'];
-
-            $query->where(function ($q) use ($keyword) {
-                $q->where('name', 'LIKE', '%' . $keyword . '%')
-                    ->orWhere('address', 'LIKE', '%' . $keyword . '%');
-            });
-        }
-
-        $hasLocation = isset($validated['latitude'], $validated['longitude']);
-
+        // Recherche GPS : limiter les résultats à 10 km.
         if ($hasLocation) {
             $latitude = (float) $validated['latitude'];
             $longitude = (float) $validated['longitude'];
+
+            $query->whereNotNull('latitude')
+                ->whereNotNull('longitude');
 
             $query->select('pharmacies.*')
                 ->selectRaw(
@@ -54,17 +134,23 @@ class CitoyenSearchController extends Controller
                     )))) AS distance',
                     [$latitude, $longitude, $latitude]
                 )
+                ->havingRaw('distance <= ?', [10])
                 ->orderBy('distance');
         } else {
             $query->orderBy('name');
         }
 
-        $pharmacies = $query->paginate(12)->withQueryString();
+        // Paginer les résultats.
+        $pharmacies = $query
+            ->paginate(12)
+            ->withQueryString();
 
         return view('citoyen.results', [
             'pharmacies' => $pharmacies,
             'hasLocation' => $hasLocation,
             'search' => $validated,
+            'medicaments' => $medicaments,
+            'medicamentFound' => $medicamentFound,
         ]);
     }
 }

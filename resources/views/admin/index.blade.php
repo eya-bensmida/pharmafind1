@@ -15,18 +15,15 @@
 </div>
 
 <div class="row g-3 mb-4">
-
     <div class="col-md-4">
         <div class="card border-0 shadow-sm p-3">
             <div class="text-muted small">Total des pharmacies</div>
-            <div class="fs-3 fw-bold">{{ $pharmacies->total() }}</div>
+            <div class="fs-3 fw-bold">{{ $pharmacies->count() }}</div>
         </div>
     </div>
-
 </div>
 
 <div class="card border-0 shadow-sm">
-
     <div class="card-body">
 
         <form method="GET"
@@ -54,11 +51,9 @@
                     Réinitialiser
                 </a>
             </div>
-
         </form>
 
         <div class="table-responsive">
-
             <table class="table align-middle">
 
                 <thead>
@@ -73,9 +68,7 @@
                 </thead>
 
                 <tbody>
-
                 @forelse($pharmacies as $pharmacy)
-
                     <tr>
                         <td>
                             <strong>{{ $pharmacy->name }}</strong>
@@ -94,63 +87,48 @@
                             @if($pharmacy->is_approved)
                                 <span class="badge bg-success">Approuvée</span>
                             @else
-                                <span class="badge bg-warning text-dark">En attente / désactivée</span>
+                                <span class="badge bg-warning text-dark">
+                                    En attente / désactivée
+                                </span>
                             @endif
                         </td>
 
                         <td class="text-end">
-
                             @if(!$pharmacy->is_approved)
-
                                 <form method="POST"
                                       action="{{ route('admin.pharmacies.approve', $pharmacy) }}"
                                       class="d-inline">
                                     @csrf
                                     @method('PATCH')
 
-                                    <button class="btn btn-sm btn-success"
-                                            type="submit">
+                                    <button class="btn btn-sm btn-success" type="submit">
                                         Approuver
                                     </button>
                                 </form>
-
                             @else
-
                                 <form method="POST"
                                       action="{{ route('admin.pharmacies.reject', $pharmacy) }}"
                                       class="d-inline">
                                     @csrf
                                     @method('PATCH')
 
-                                    <button class="btn btn-sm btn-outline-danger"
-                                            type="submit">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">
                                         Désactiver
                                     </button>
                                 </form>
-
                             @endif
-
                         </td>
                     </tr>
-
                 @empty
-
                     <tr>
                         <td colspan="6" class="text-center py-5 text-muted">
                             Aucune pharmacie trouvée.
                         </td>
                     </tr>
-
                 @endforelse
-
                 </tbody>
 
             </table>
-
-        </div>
-
-        <div class="mt-3">
-            {{ $pharmacies->links() }}
         </div>
 
     </div>
