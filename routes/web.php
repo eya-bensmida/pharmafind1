@@ -7,10 +7,13 @@ use App\Http\Controllers\PharmacyController;
 use App\Http\Controllers\MedicamentController;
 use App\Http\Controllers\PharmacistProfileController;
 use App\Http\Controllers\PharmacistRegistrationController;
+use App\Http\Controllers\PublicSearchController;
+use App\Http\Controllers\PharmacistDashboardController;
 
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+// Recherche publique (page d'accueil)
+Route::get('/', [PublicSearchController::class, 'index'])->name('home');
+Route::get('/api/villes', [PublicSearchController::class, 'cities'])->name('api.villes');
+Route::get('/api/medicaments', [PublicSearchController::class, 'medicaments'])->name('api.medicaments');
 
 // Connexion et déconnexion
 Route::get('/login', [AuthController::class, 'showLogin'])
@@ -70,6 +73,9 @@ Route::middleware(['auth', 'role:owner'])
     ->prefix('pharmacien')
     ->name('pharmacien.')
     ->group(function () {
+        Route:: get('/tableau-de-bord',
+[PharmacistDashboardController :: class, 'index' ]
+)->name('dashboard');
 
         // Recherche intelligente et suggestions
         Route::get('/medicaments/recherche-intelligente',

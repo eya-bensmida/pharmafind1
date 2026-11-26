@@ -26,11 +26,14 @@ class PharmacistProfileController extends Controller
         }
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'region' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:30',
+            'name'      => 'required|string|max:255',
+            'address'   => 'required|string|max:255',
+            'city'      => 'required|string|max:255',
+            'region'    => 'nullable|string|max:255',
+            'phone'     => 'nullable|string|max:30',
+            'type'      => 'required|in:jour,nuit',
+            'latitude'  => 'nullable|numeric|between:-90,90',
+            'longitude' => 'nullable|numeric|between:-180,180',
         ]);
 
         $pharmacy->update($validated);
