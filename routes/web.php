@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -7,10 +8,11 @@ use App\Http\Controllers\PharmacyController;
 use App\Http\Controllers\MedicamentController;
 use App\Http\Controllers\PharmacistProfileController;
 use App\Http\Controllers\PharmacistRegistrationController;
+use App\Http\Controllers\CitoyenHomeController;
 
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+// Accueil citoyen
+Route::get('/', [CitoyenHomeController::class, 'home'])
+    ->name('citoyen.home');
 
 // Connexion et déconnexion
 Route::get('/login', [AuthController::class, 'showLogin'])
@@ -64,7 +66,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     )->name('admin.pharmacies.index');
 });
 
-
 // Espace pharmacien
 Route::middleware(['auth', 'role:owner'])
     ->prefix('pharmacien')
@@ -89,4 +90,3 @@ Route::middleware(['auth', 'role:owner'])
             [PharmacistProfileController::class, 'update']
         )->name('profile.update');
     });
-
