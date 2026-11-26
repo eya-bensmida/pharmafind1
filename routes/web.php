@@ -9,10 +9,14 @@ use App\Http\Controllers\MedicamentController;
 use App\Http\Controllers\PharmacistProfileController;
 use App\Http\Controllers\PharmacistRegistrationController;
 use App\Http\Controllers\CitoyenHomeController;
+use App\Http\Controllers\CitoyenSearchController;
 
 // Accueil citoyen
 Route::get('/', [CitoyenHomeController::class, 'home'])
     ->name('citoyen.home');
+// Recherche des pharmacies pour les citoyens
+Route::get('/recherche', [CitoyenSearchController::class, 'search'])
+    ->name('citoyen.search');
 
 // Connexion et déconnexion
 Route::get('/login', [AuthController::class, 'showLogin'])
