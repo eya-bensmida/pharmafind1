@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -44,6 +43,7 @@
             color: white;
             padding: 28px 18px;
             z-index: 1000;
+            overflow-y: auto;
         }
 
         .brand {
@@ -181,36 +181,24 @@
     <div class="menu-label">Administration</div>
 
     <a href="{{ route('admin.pharmacies.requests') }}"
-   class="{{ request()->routeIs('admin.pharmacies.requests') || request()->routeIs('admin.pharmacies.show') ? 'active' : '' }}">
-    <i class="bi bi-clipboard2-check"></i>
-    Demandes de pharmacies
-</a>
+       class="{{ request()->routeIs('admin.pharmacies.requests') || request()->routeIs('admin.pharmacies.show') ? 'active' : '' }}">
+        <i class="bi bi-clipboard2-check"></i>
+        Demandes de pharmacies
+    </a>
+
     <a href="{{ route('admin.pharmacies.index') }}"
-       class="{{ request()->routeIs('admin.pharmacies.*') ? 'active' : '' }}">
+       class="{{ request()->routeIs('admin.pharmacies.index') ? 'active' : '' }}">
         <i class="bi bi-hospital"></i>
         Pharmacies
     </a>
 
-    <a href="#">
-        <i class="bi bi-capsule"></i>
-        Médicaments
-    </a>
-
-    <a href="#">
-        <i class="bi bi-clipboard-check"></i>
-        Propositions
-    </a>
-
-    <a href="#">
+    <a href="{{ route('admin.failed-searches.index') }}"
+       class="{{ request()->routeIs('admin.failed-searches.*') ? 'active' : '' }}">
         <i class="bi bi-search"></i>
         Recherches sans résultat
     </a>
 
-    <a href="#">
-        <i class="bi bi-people"></i>
-        Utilisateurs
-    </a>
-
+ 
     <div class="menu-label">Compte</div>
 
     <form method="POST" action="{{ route('logout') }}">
