@@ -1,10 +1,10 @@
-
 <?php
 
 use App\Http\Controllers\ChatbotController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\FailedSearchController;
 use App\Http\Controllers\PharmacyController;
 use App\Http\Controllers\MedicamentController;
 use App\Http\Controllers\PharmacistProfileController;
@@ -82,6 +82,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/pharmacies',
         [PharmacyController::class, 'index']
     )->name('admin.pharmacies.index');
+
+    // Recherches sans résultat
+    Route::get('/admin/recherches-sans-resultat',
+        [FailedSearchController::class, 'index']
+    )->name('admin.failed-searches.index');
 });
 
 // Espace pharmacien

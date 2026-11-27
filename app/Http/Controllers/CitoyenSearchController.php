@@ -55,6 +55,7 @@ class CitoyenSearchController extends Controller
             'type' => ['required', 'in:jour,nuit'],
             'gouvernorat' => ['nullable', 'string', 'max:100'],
             'ville' => ['nullable', 'string', 'max:100'],
+
             'latitude' => [
                 'nullable',
                 'numeric',
@@ -71,35 +72,36 @@ class CitoyenSearchController extends Controller
 
         $validated['medicament'] = trim($validated['medicament']);
 
-        // Rechercher le médicament dans le catalogue.
+        // 1. Rechercher uniquement les médicaments actifs.
         $medicaments = Medicament::query()
             ->where('is_active', true)
-            ->where(
-                'name',
-                'LIKE',
-                '%' . $validated['medicament'] . '%'
-            )
+            ->where('name', 'LIKE', '%' . $validated['medicament'] . '%')
             ->get();
 
-        $medicamentFound = $medicaments->isNotEmpty();
         $medicamentIds = $medicaments->pluck('id');
 
-        // Vérifier la présence d'une position GPS.
+        $medicamentFound = $medicaments->isNotEmpty();
+
+        // 2. Déterminer si les coordonnées GPS sont disponibles.
         $hasLocation = isset(
             $validated['latitude'],
             $validated['longitude']
         );
 
-        // Rechercher uniquement les pharmacies approuvées,
-        // du type choisi, avec un stock déclaré positif.
+        // 3. Construire la recherche des pharmacies.
         $query = Pharmacy::query()
             ->where('verification_status', 'approved')
+            ->where('is_approved', true)
             ->where('type', $validated['type'])
+
+            // Pharmacies ayant le médicament en stock.
             ->whereHas('stocks', function ($stockQuery) use ($medicamentIds) {
                 $stockQuery
                     ->whereIn('medicament_id', $medicamentIds)
                     ->where('declared_quantity', '>', 0);
             })
+
+            // Charger uniquement les stocks correspondants.
             ->with(['stocks' => function ($stockQuery) use ($medicamentIds) {
                 $stockQuery
                     ->whereIn('medicament_id', $medicamentIds)
@@ -107,17 +109,7 @@ class CitoyenSearchController extends Controller
                     ->with('medicament');
             }]);
 
-        // Filtrer par gouvernorat exact.
-        if (!empty($validated['gouvernorat'])) {
-            $query->where('region', $validated['gouvernorat']);
-        }
-
-        // Filtrer par ville/localité exacte.
-        if (!empty($validated['ville'])) {
-            $query->where('city', $validated['ville']);
-        }
-
-        // Recherche GPS : limiter les résultats à 10 km.
+        // 4. MODE GPS : priorité à la proximité.
         if ($hasLocation) {
             $latitude = (float) $validated['latitude'];
             $longitude = (float) $validated['longitude'];
@@ -135,12 +127,23 @@ class CitoyenSearchController extends Controller
                     [$latitude, $longitude, $latitude]
                 )
                 ->havingRaw('distance <= ?', [10])
-                ->orderBy('distance');
-        } else {
+                ->orderBy('distance', 'asc');
+        }
+
+        // 5. MODE MANUEL : gouvernorat et ville.
+        else {
+            if (!empty($validated['gouvernorat'])) {
+                $query->where('region', $validated['gouvernorat']);
+            }
+
+            if (!empty($validated['ville'])) {
+                $query->where('city', $validated['ville']);
+            }
+
             $query->orderBy('name');
         }
 
-        // Paginer les résultats.
+        // 6. Paginer les résultats.
         $pharmacies = $query
             ->paginate(12)
             ->withQueryString();
