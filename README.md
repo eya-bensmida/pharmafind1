@@ -87,7 +87,7 @@ Objectifs principaux :
 
 Le projet utilise l'architecture MVC (Modèle-Vue-Contrôleur) de Laravel.
 
-
+text
 pharmafind1/
 │
 ├── app/
@@ -124,7 +124,6 @@ pharmafind1/
 ├── composer.json
 ├── package.json
 └── README.md
-
 
 ### Organisation générale
 
