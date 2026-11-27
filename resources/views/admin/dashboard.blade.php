@@ -28,8 +28,7 @@
                     </h5>
 
                     <p class="mb-0">
-                        Vous avez {{ $pendingRequests }}
-                        demande(s) en attente d'examen.
+                      Des demandes de pharmacies sont en attente d'examen.
                     </p>
                 </div>
             </div>
