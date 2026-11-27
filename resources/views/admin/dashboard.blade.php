@@ -72,13 +72,13 @@
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6">
-        <div class="card border-0 shadow-sm p-4 h-100">
-            <p class="text-muted mb-2">Propositions</p>
-            <h3 class="fw-bold">{{ $proposalsCount }}</h3>
-            <i class="bi bi-clipboard-check fs-2 text-warning"></i>
-        </div>
+   <div class="col-xl-3 col-md-6">
+    <div class="card border-0 shadow-sm p-4 h-100">
+        <p class="text-muted mb-2">Recherches infructueuses</p>
+        <h3 class="fw-bold">{{ $failedSearchesCount }}</h3>
+        <i class="bi bi-search fs-2 text-danger"></i>
     </div>
+</div>
 
 </div>
 
