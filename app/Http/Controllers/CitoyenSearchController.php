@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pharmacy;
 use App\Models\Medicament;
+use App\Models\Pharmacy;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class CitoyenSearchController extends Controller
 {
@@ -148,6 +151,12 @@ class CitoyenSearchController extends Controller
             ->paginate(12)
             ->withQueryString();
 
+        // 7. Enregistrer la recherche si elle n'a donné aucun résultat.
+        //    (uniquement sur la première page, pour ne pas compter deux fois)
+        if ($pharmacies->total() === 0 && $pharmacies->currentPage() === 1) {
+            $this->recordFailedSearch($validated);
+        }
+
         return view('citoyen.results', [
             'pharmacies' => $pharmacies,
             'hasLocation' => $hasLocation,
@@ -155,5 +164,46 @@ class CitoyenSearchController extends Controller
             'medicaments' => $medicaments,
             'medicamentFound' => $medicamentFound,
         ]);
+    }
+
+    /**
+     * Enregistre une recherche sans résultat dans la table failed_searches.
+     *
+     * Une ligne par médicament recherché : si le terme existe déjà, on
+     * incrémente search_count et on met à jour last_searched_at.
+     * Une erreur d'enregistrement ne doit jamais casser la page de résultats.
+     */
+    private function recordFailedSearch(array $search): void
+    {
+        try {
+            $term = trim($search['medicament']);
+
+            if ($term === '') {
+                return;
+            }
+
+            $now = now();
+
+            $updated = DB::table('failed_searches')
+                ->where('search_term', $term)
+                ->update([
+                    'search_count'     => DB::raw('search_count + 1'),
+                    'last_searched_at' => $now,
+                    'updated_at'       => $now,
+                ]);
+
+            if ($updated === 0) {
+                DB::table('failed_searches')->insert([
+                    'user_id'          => auth()->id(),
+                    'search_term'      => $term,
+                    'search_count'     => 1,
+                    'last_searched_at' => $now,
+                    'created_at'       => $now,
+                    'updated_at'       => $now,
+                ]);
+            }
+        } catch (Throwable $e) {
+            Log::error('Recherche sans résultat non enregistrée : ' . $e->getMessage());
+        }
     }
 }
