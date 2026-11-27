@@ -17,7 +17,7 @@ PharmaFind est une plateforme web développée avec Laravel qui permet de recher
 11. Données de démonstration
 12. Tests
 13. Équipe
-14. Licence
+
 
 ## 1. Contexte et objectifs
 
