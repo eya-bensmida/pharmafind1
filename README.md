@@ -1,66 +1,292 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# PharmaFind
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+PharmaFind est une plateforme web développée avec Laravel qui permet de rechercher des pharmacies et de consulter la disponibilité des médicaments en Tunisie. Les pharmaciens gèrent eux-mêmes leurs stocks, tandis que les administrateurs valident les pharmacies inscrites et supervisent la plateforme.
 
-## About Laravel
+## Table des matières
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+1. Contexte et objectifs
+2. Fonctionnalités
+3. Rôles des utilisateurs
+4. Technologies utilisées
+5. Architecture du projet
+6. Prérequis
+7. Installation
+8. Configuration
+9. Lancement
+10. Avancement par sprint
+11. Données de démonstration
+12. Tests
+13. Équipe
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 1. Contexte et objectifs
 
-## Learning Laravel
+Trouver un médicament précis dans une pharmacie proche peut être long et incertain. PharmaFind répond à ce problème en centralisant les informations de disponibilité des médicaments et en les rendant accessibles aux utilisateurs.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Objectifs principaux :
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- Faciliter la recherche de pharmacies pour les utilisateurs.
+- Permettre de consulter le statut d'un médicament avant de se déplacer.
+- Donner aux pharmaciens un outil simple pour gérer leurs stocks.
+- Donner aux administrateurs un moyen de contrôler les pharmacies inscrites et de superviser la plateforme.
+- Proposer une assistance conversationnelle grâce à un chatbot basé sur l'intelligence artificielle.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 2. Fonctionnalités
 
-## Laravel Sponsors
+### Utilisateurs (citoyens)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- Accès à la page d'accueil.
+- Recherche de pharmacies.
+- Recherche par gouvernorat et ville.
+- Recherche avec géolocalisation GPS.
+- Consultation des résultats.
+- Assistance par chatbot multilingue (français, arabe et tunisien).
 
-### Premium Partners
+### Pharmaciens
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+- Demande de création d'un espace pharmacien.
+- Recherche et sélection d'une pharmacie existante lors de l'inscription.
+- Connexion à l'espace pharmacien.
+- Gestion du profil.
+- Gestion des médicaments et des stocks.
+- Ajout, modification et retrait d'un médicament.
 
-## Contributing
+### Administrateurs
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- Connexion à l'espace administrateur.
+- Consultation du tableau de bord.
+- Consultation et validation des demandes de pharmacies.
+- Consultation des pharmacies inscrites.
+- Supervision des recherches sans résultat.
 
-## Code of Conduct
+## 3. Rôles des utilisateurs
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+| Rôle | Description |
+|---|---|
+| Utilisateur / Citoyen | Recherche des pharmacies et consulte les informations de disponibilité |
+| Pharmacien | Gère le profil et les stocks de sa pharmacie après validation |
+| Administrateur | Valide les pharmacies et supervise la plateforme |
 
-## Security Vulnerabilities
+## 4. Technologies utilisées
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Couche | Technologie |
+|---|---|
+| Frontend | HTML5, CSS3, JavaScript, Blade |
+| Framework CSS | Bootstrap 5.3.3 |
+| Backend | PHP 8.2 et Laravel 12 |
+| Base de données | MySQL |
+| Chatbot | Google Gemini API REST |
+| Modèle IA | Gemini 2.5 Flash (gemini-2.5-flash) |
+| Version de l'API Gemini | v1beta |
+| Communication HTTP | Laravel HTTP Client |
+| Serveur local | XAMPP / serveur de développement Laravel |
+| Gestion des dépendances PHP | Composer |
+| Gestion des versions | Git et GitHub |
 
-## License
+## 5. Architecture du projet
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Le projet utilise l'architecture MVC (Modèle-Vue-Contrôleur) de Laravel.
+
+
+### Organisation générale
+
+- **Models :** représentent les données et les relations avec la base MySQL.
+- **Controllers :** gèrent les requêtes et les interactions entre les vues et les modèles.
+- **Services :** regroupent certains traitements applicatifs, notamment le service d'intégration Gemini.
+- **Views :** contiennent les interfaces Blade destinées aux citoyens, pharmaciens et administrateurs.
+- **Routes :** définissent les points d'accès de l'application.
+- **Database :** contient les migrations, les seeders et les factories.
+
+## 6. Prérequis
+
+Pour installer et exécuter PharmaFind, les outils suivants sont nécessaires :
+
+- PHP 8.2 ou supérieur.
+- Composer.
+- MySQL.
+- XAMPP ou un environnement PHP/MySQL équivalent.
+- Git.
+- Node.js et npm pour la gestion et la compilation des ressources frontend .
+- Une clé API Google Gemini pour le chatbot.
+
+## 7. Installation
+
+### 1. Cloner le dépôt GitHub
+
+
+git clone https://github.com/eya-bensmida/pharmafind1.git
+cd pharmafind1
+
+
+### 2. Installer les dépendances PHP
+
+
+composer install
+
+
+### 3. Installer les dépendances frontend
+
+Si le projet utilise Vite :
+
+
+npm install
+
+
+### 4. Préparer le fichier d'environnement
+
+Sous Windows PowerShell :
+
+
+Copy-Item .env.example .env
+
+
+Sous Linux ou macOS :
+
+
+cp .env.example .env
+
+
+### 5. Générer la clé de l'application
+
+
+php artisan key:generate
+
+
+### 6. Créer la base de données
+
+Créer une base de données vide nommée `pharmafind` dans MySQL (par exemple avec phpMyAdmin sous XAMPP), puis configurer le fichier `.env` comme indiqué dans la section suivante.
+
+### 7. Créer les tables et charger les données initiales
+
+
+php artisan migrate --seed
+
+
+### 8. Créer le lien de stockage
+
+Cette commande rend accessibles les fichiers téléversés (par exemple les justificatifs des pharmacies) :
+
+
+php artisan storage:link
+
+
+## 8. Configuration
+
+Modifier le fichier `.env` à la racine du projet.
+
+### Configuration de la base de données
+
+
+APP_NAME=PharmaFind
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://127.0.0.1:8000
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=pharmafind
+DB_USERNAME=root
+DB_PASSWORD=
+
+
+Les identifiants doivent être adaptés à l'installation locale de MySQL.
+
+### Configuration du chatbot Gemini
+
+Ajouter les variables suivantes dans `.env` :
+
+
+GEMINI_API_KEY=VOTRE_CLE_API_GEMINI
+GEMINI_MODEL=gemini-2.5-flash
+
+
+Le chatbot utilise l'API Google Gemini REST avec l'endpoint v1beta et la méthode generateContent.
+
+**Important :** ne jamais publier le fichier `.env` ni la clé API sur GitHub.
+
+Après une modification de configuration :
+
+
+php artisan config:clear
+
+
+## 9. Lancement
+
+### Démarrer le serveur Laravel
+
+À la racine du projet :
+
+
+php artisan serve
+
+
+L'application sera accessible à l'adresse :
+
+
+http://127.0.0.1:8000
+
+
+### Compiler les ressources frontend
+
+Pour le développement :
+
+
+npm run dev
+
+
+Pour générer les ressources de production :
+
+npm run build
+
+
+Ces commandes sont à utiliser si le projet dispose de la configuration Vite correspondante.
+
+## 10. Avancement par sprint
+
+| Sprint | Thème | Statut |
+|---|---|---|
+| Sprint 1 | Authentification administrateur, gestion des pharmacies et interface administrative | Terminé |
+| Sprint 2 | Espace pharmacien et gestion des médicaments et des stocks | Terminé |
+| Sprint 3 | Recherche citoyenne, géolocalisation, résultats et chatbot IA | En cours |
+
+Le détail des tâches et des livrables est disponible dans le dossier `docs/`, s'il est présent dans le dépôt.
+
+## 11. Données de démonstration
+
+Pour tester la validation d'une demande de pharmacie, des documents fictifs peuvent être utilisés dans le dossier `docs/specimens/` :
+
+- `specimen_autorisation_pharmacie_tunisie.pdf`
+- `specimen_justificatif_ordre_pharmacien_tunisie.pdf`
+
+Ces fichiers sont des maquettes de test. Ils ne sont pas des documents officiels et ne doivent jamais être présentés comme de vrais justificatifs.
+
+En production, le demandeur doit téléverser les documents authentiques et l'administrateur doit les vérifier auprès des autorités compétentes.
+
+### Comptes de démonstration
+
+Les identifiants des comptes administrateur et pharmacien doivent être communiqués séparément si des comptes de test sont configurés.
+
+## 12. Tests
+
+Laravel fournit une commande permettant d'exécuter les tests automatisés du projet :
+
+
+php artisan test
+
+
+Pour vérifier également les routes enregistrées :
+
+
+php artisan route:list
+
+
+## 13. Équipe
+
+| Nom | Rôle |
+|---|---|
+| Ghofrane Rhouma | Développement |
+| Eya Bensmida | Développement |
+| Eya Bensmida et Ghofrane Rhouma | Base de données et intégration |
+
+Projet réalisé dans le cadre du module 'projet d'integration', encadré par Madame Chifa Laabidi.
