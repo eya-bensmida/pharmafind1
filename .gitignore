@@ -21,3 +21,8 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Scripts de verification locaux
+inspect_excel.php
+verify_medicaments.php
+inspect_amm.php
