@@ -1,5 +1,7 @@
+
 <?php
 
+use App\Http\Controllers\ChatbotController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
@@ -110,3 +112,8 @@ Route::middleware(['auth', 'role:owner'])
             [PharmacistProfileController::class, 'update']
         )->name('profile.update');
     });
+
+// PharmaFind - Assistant IA
+Route::post('/chatbot/send', [ChatbotController::class, 'send'])
+    ->middleware('throttle:20,1')
+    ->name('chatbot.send');

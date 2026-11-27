@@ -1,8 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>@yield('title', 'PharmaFind') | PharmaFind</title>
@@ -35,6 +35,15 @@
             box-sizing: border-box;
         }
 
+        /* Défilement fluide vers les ancres (#services, #faq...) */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background: var(--light-bg);
@@ -48,11 +57,15 @@
             text-decoration: none;
         }
 
+        /* NAVBAR */
         .main-navbar {
             background: var(--white);
             border-bottom: 1px solid var(--border);
             box-shadow: 0 2px 12px rgba(18, 59, 74, 0.04);
             padding: 14px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
         }
 
         .brand-logo {
@@ -63,6 +76,10 @@
             font-size: 22px;
             font-weight: 800;
             letter-spacing: -0.8px;
+        }
+
+        .brand-logo:hover {
+            color: var(--teal);
         }
 
         .brand-icon {
@@ -90,6 +107,20 @@
             color: var(--teal);
         }
 
+        .navbar-nav .nav-link.active {
+            font-weight: 800;
+        }
+
+        .navbar-toggler {
+            border-color: var(--border);
+            box-shadow: none !important;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+
+        /* BUTTONS */
         .btn-primary-custom {
             background: var(--teal);
             color: white;
@@ -123,6 +154,27 @@
             color: var(--teal);
         }
 
+        /* Bouton Espace professionnel (dans la navbar) */
+        .btn-pro {
+            display: inline-flex;
+            align-items: center;
+            background: white;
+            color: var(--navy);
+            border: 1px solid var(--navy);
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-pro:hover {
+            background: var(--navy);
+            border-color: var(--navy);
+            color: white;
+        }
+
+        /* PAGE */
         .page-content {
             flex: 1;
         }
@@ -144,6 +196,7 @@
             color: var(--muted);
         }
 
+        /* FOOTER */
         .main-footer {
             background: var(--dark-navy);
             color: rgba(255, 255, 255, 0.75);
@@ -166,6 +219,7 @@
             color: white;
         }
 
+        /* MOBILE */
         @media (max-width: 767px) {
             .brand-logo {
                 font-size: 20px;
@@ -175,6 +229,13 @@
                 padding: 10px 0;
             }
 
+            .main-footer {
+                margin-top: 45px;
+            }
+        }
+
+        /* MENU REPLIÉ (en dessous de 1200px) */
+        @media (max-width: 1199px) {
             .navbar-nav {
                 padding-top: 12px;
             }
@@ -183,8 +244,14 @@
                 padding: 10px 4px !important;
             }
 
-            .main-footer {
-                margin-top: 45px;
+            .navbar-nav .nav-item {
+                margin-left: 0 !important;
+            }
+
+            .navbar-nav .btn-pro,
+            .navbar-nav .btn-primary-custom {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
@@ -194,7 +261,8 @@
 
 <body>
 
-    <nav class="navbar navbar-expand-lg main-navbar">
+    <!-- NAVBAR COMMUNE CITOYEN -->
+    <nav class="navbar navbar-expand-xl main-navbar">
         <div class="container">
 
             <a class="brand-logo" href="{{ route('citoyen.home') }}">
@@ -204,31 +272,57 @@
                 <span>PharmaFind</span>
             </a>
 
-            <button class="navbar-toggler" type="button"
+            <button class="navbar-toggler"
+                    type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#citizenNavbar"
                     aria-controls="citizenNavbar"
                     aria-expanded="false"
                     aria-label="Ouvrir le menu">
+
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="citizenNavbar">
-                <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                <ul class="navbar-nav ms-auto align-items-xl-center">
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('citoyen.home') }}">
+                        <a class="nav-link {{ request()->routeIs('citoyen.home') ? 'active' : '' }}"
+                           href="{{ route('citoyen.home') }}"
+                           @if(request()->routeIs('citoyen.home')) aria-current="page" @endif>
+                            <i class="bi bi-house-door me-1"></i>
                             Accueil
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('citoyen.search.form') }}">
-                            Rechercher un médicament
+                        <a class="nav-link"
+                           data-section="services"
+                           href="{{ route('citoyen.home') }}#services">
+                            <i class="bi bi-grid me-1"></i>
+                            Fonctionnalités
                         </a>
                     </li>
 
-                    <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           data-section="faq"
+                           href="{{ route('citoyen.home') }}#faq">
+                            <i class="bi bi-question-circle me-1"></i>
+                            FAQ
+                        </a>
+                    </li>
+
+                    <li class="nav-item ms-xl-2 mt-2 mt-xl-0">
+                        <a class="btn btn-pro"
+                           href="{{ route('login') }}">
+                            <i class="bi bi-person-badge me-1"></i>
+                            Espace professionnel
+                        </a>
+                    </li>
+
+                    <li class="nav-item ms-xl-2 mt-2 mt-xl-0">
                         <a class="btn btn-primary-custom"
                            href="{{ route('citoyen.search.form') }}">
                             <i class="bi bi-search me-1"></i>
@@ -242,10 +336,12 @@
         </div>
     </nav>
 
+    <!-- CONTENU DES PAGES -->
     <main class="page-content">
         @yield('content')
     </main>
 
+    <!-- FOOTER COMMUN -->
     <footer class="main-footer">
         <div class="container">
 
@@ -268,8 +364,16 @@
                         Accueil
                     </a>
 
-                    <a href="{{ route('citoyen.search.form') }}" class="footer-link">
+                    <a href="{{ route('citoyen.search.form') }}" class="footer-link me-3">
                         Recherche
+                    </a>
+
+                    <a href="{{ route('citoyen.home') }}#faq" class="footer-link me-3">
+                        FAQ
+                    </a>
+
+                    <a href="{{ route('login') }}" class="footer-link">
+                        Espace professionnel
                     </a>
                 </div>
 
@@ -285,6 +389,59 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Referme le menu mobile après un clic sur un lien d'ancre (#services, #faq)
+        document.addEventListener('DOMContentLoaded', function () {
+            const menu = document.getElementById('citizenNavbar');
+            if (!menu) return;
+
+            menu.querySelectorAll('a[href*="#"]').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    if (menu.classList.contains('show')) {
+                        bootstrap.Collapse.getOrCreateInstance(menu).hide();
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        // Allume « Fonctionnalités » / « FAQ » dans la navbar selon la section visible
+        document.addEventListener('DOMContentLoaded', function () {
+            const links = document.querySelectorAll('.navbar-nav .nav-link[data-section]');
+            const home = document.querySelector('.navbar-nav .nav-link[aria-current="page"]');
+            const sections = [];
+
+            links.forEach(function (link) {
+                const section = document.getElementById(link.dataset.section);
+                if (section) sections.push({ link: link, section: section });
+            });
+
+            if (!sections.length) return;
+
+            function update() {
+                let current = null;
+
+                sections.forEach(function (item) {
+                    const rect = item.section.getBoundingClientRect();
+                    if (rect.top <= 140 && rect.bottom > 140) current = item;
+                });
+
+                links.forEach(function (link) { link.classList.remove('active'); });
+
+                if (current) {
+                    current.link.classList.add('active');
+                    if (home) home.classList.remove('active');
+                } else if (home) {
+                    home.classList.add('active');
+                }
+            }
+
+            window.addEventListener('scroll', update, { passive: true });
+            update();
+        });
+    </script>
 
     @stack('scripts')
 
